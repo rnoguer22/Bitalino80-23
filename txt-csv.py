@@ -15,7 +15,7 @@ class To_csv():
                 stripped = (line.strip() for line in in_file)
                 lines = (line.split(",") for line in stripped if line)
                 lines_after_4 = islice(lines, 3, None)  # Empieza a partir de la línea 4
-                with open('Data/' + file + '.csv', 'w') as out_file:
+                with open('csv/' + file + '.csv', 'w') as out_file:
                     writer = csv.writer(out_file)
                     columnas = self.get_data(file)
                     writer.writerow(columnas)
