@@ -1,29 +1,22 @@
-import csv
 import os
-from itertools import islice
+import pandas as pd
+import re
 
-class To_csv():
-    def __init__(self):
-        self.txt_names = [f for f in os.listdir('Data') if f.endswith('.txt')]
 
-    def txt_files_name(self):
-        print(self.txt_names)
-    
-    def to_csv(self):
-        for file in self.txt_names:
-            with open('Data/' + file, 'r') as in_file:
-                stripped = (line.strip() for line in in_file)
-                lines = (line.split(",") for line in stripped if line)
-                lines_after_4 = islice(lines, 3, None)  # Empieza a partir de la línea 4
-                with open('Data/' + file + '.csv', 'w') as out_file:
-                    writer = csv.writer(out_file)
-                    columnas = self.get_data(file)
-                    writer.writerow(columnas)
-                    writer.writerows(lines_after_4)
+class GetData:
 
-    
+    def __init__(self, data_path):
+        self.data_path = data_path
+
+
+    def get_files(self):
+        self.files = os.listdir(self.data_path)
+        return self.files
+
+
     def get_data(self, fichero):
-        with open(f'Data/{fichero}', 'r', encoding='utf-8') as file:
+        print(f'{self.data_path}{fichero}')
+        with open(f'{self.data_path}{fichero}', 'r', encoding='utf-8') as file:
             data = file.readlines()
             linea = data[1]
             indice_column = linea.find('"column":')
@@ -46,8 +39,9 @@ class To_csv():
                 lista = lista_subcadena.split(',')
 
                 lista = [elem.strip().strip('"') for elem in lista]
-                return lista
 
-if __name__ == '__main__':
-    to_csv = To_csv()
-    to_csv.to_csv()
+
+data = GetData('./Data/')
+for file in data.get_files():
+    if file == 'ECG_Esther_2.txt':
+        data.get_data(file)
