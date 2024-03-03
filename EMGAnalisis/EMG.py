@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 class EMG():
     def __init__(self, ruta_txt, ruta_csv):
         self.signals = OpenSignalsReader(ruta_txt)
@@ -47,7 +46,7 @@ class EMG():
 
 
 if __name__ == "__main__":
-    emg = EMG("Data/EMG_Pelayo.txt", "csv/EMG/EMG_Pelayo.csv")
+    emg = EMG("./Data/EMG_Pelayo.txt", "./csv/EMG/EMG_Pelayo.csv")
     data_cleaned = emg.clean()
     outliers = emg.outliers(data_cleaned)
     data = emg.group(outliers)
