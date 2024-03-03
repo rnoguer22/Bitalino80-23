@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from scipy.signal import find_peaks
 import matplotlib.pyplot as plt
-
+import os
 
 
 
@@ -21,7 +21,7 @@ class ECG2:
         return self.data_path[15:-6]
     
 
-    #Metodo para aplicar un filtro de media móvil y suavizar la señal y eliminar el ruido
+    #Metodo para aplicar un filtro de media móvil, suavizar la señal y eliminar el ruido
     def data_cleaning(self): 
         window_size = 3
         df_smoothed = self.df.rolling(window=window_size).mean().dropna()
@@ -51,15 +51,22 @@ class ECG2:
     def get_cardio_freq(self, tiempo):
         num_muestras = self.df.shape[0]
         frecuencia_muestreo = num_muestras / tiempo  
-        print(frecuencia_muestreo) 
         # Calcula la frecuencia cardíaca utilizando los picos de la señal
         tiempo_entre_picos = np.diff(self.peaks)
         frecuencia_cardiaca = 60 / (np.mean(tiempo_entre_picos) / frecuencia_muestreo)
-        return frecuencia_cardiaca
+        return round(frecuencia_cardiaca)
+
+    
+    #Metodo para obtener los resultados de cada usuario
+    def get_results(self):
+        directory = './csv/ECG2/'
+        files = os.listdir('./csv/ECG2/')
+        for file in files:
+            dir_ = directory + file
+            ecg2 = ECG2(dir_)
+            ecg2.plot_peaks()
+            print("Frecuencia cardiaca {}: {} latidos por minuto".format(ecg2.get_name(), ecg2.get_cardio_freq(360)))
 
 
-
-
-ecg2 = ECG2('./csv/ECG2/ECG_Esther_2.csv')
-ecg2.plot_peaks()
-print("Frecuencia cardiaca: ", ecg2.get_cardio_freq(21), " latidos por minuto")
+if __name__ == '__main__':
+    ECG2.get_results(ECG2)
