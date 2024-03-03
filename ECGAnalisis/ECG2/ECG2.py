@@ -32,32 +32,34 @@ class ECG2:
         return df_normalized   
 
 
+    #Metodo para graficar la señal de ECG y los picos R identificados
     def plot_peaks(self):
-        ecg_data = self.df['A2'].values
-
-        num_muestras = self.df.shape[0]
-        tiempo = 21
-        frecuencia_muestreo = num_muestras / tiempo  
-        print(frecuencia_muestreo)  
-
-        # Encuentra los picos R en la señal de ECG
-        peaks, _ = find_peaks(ecg_data, height=0)  # Ajusta el valor de altura según tu señal
-
-        # Grafica la señal de ECG y los picos identificados
+        ecg_data = self.df['A2'].values 
+        # Encuentramos los picos R en la señal de ECG
+        self.peaks, _ = find_peaks(ecg_data, height=0)  # Ajusta el valor de altura según tu señal
+        #Guardamos la grafica del ECG y los picos
         plt.figure(figsize=(12, 6))
         plt.plot(ecg_data, color='blue')
-        plt.plot(peaks, ecg_data[peaks], "x", color='red', markersize=10)
+        plt.plot(self.peaks, ecg_data[self.peaks], "x", color='red', markersize=10)
         plt.title('ECG {} con Picos R Identificados'.format(self.get_name()))
         plt.xlabel('Muestras')
         plt.ylabel('Amplitud')
         plt.savefig('./ECGAnalisis/ECG2/img/{}_ECG_peaks.png'.format(self.get_name()))
+    
 
-        # Calcula la frecuencia cardíaca utilizando los picos R identificados
-        tiempo_entre_picos = np.diff(peaks)
-        frecuencia_cardiaca = 60 / (np.mean(tiempo_entre_picos) / frecuencia_muestreo)  # frecuencia_muestreo es la frecuencia de muestreo de tu señal
-        print("Frecuencia Cardíaca:", frecuencia_cardiaca, "latidos por minuto")
+    #Metodo para obtener la frecuencia cardíaca
+    def get_cardio_freq(self, tiempo):
+        num_muestras = self.df.shape[0]
+        frecuencia_muestreo = num_muestras / tiempo  
+        print(frecuencia_muestreo) 
+        # Calcula la frecuencia cardíaca utilizando los picos de la señal
+        tiempo_entre_picos = np.diff(self.peaks)
+        frecuencia_cardiaca = 60 / (np.mean(tiempo_entre_picos) / frecuencia_muestreo)
+        return frecuencia_cardiaca
 
 
-ecg2 = ECG2('./csv/ECG2/ECG_Moyis_2.csv')
-print(ecg2.get_columns())
-ecg2.find_peaks()
+
+
+ecg2 = ECG2('./csv/ECG2/ECG_Esther_2.csv')
+ecg2.plot_peaks()
+print("Frecuencia cardiaca: ", ecg2.get_cardio_freq(21), " latidos por minuto")
