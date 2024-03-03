@@ -43,12 +43,9 @@ class EMG():
         return data_grouped
     
     def graph(self):
-        self.data.plot()
-        plt.xlabel('nSeq')
-        plt.ylabel('Amplitud')
-        plt.title('Señales de EMG')
+        self.signals.plot()
         plt.savefig('EMGAnalisis/img/EMG_{}.png'.format(self.nombre))
-        plt.show()
+        
 
     def plot(self, data):
         data_reset = data.reset_index()
@@ -65,14 +62,14 @@ class EMG():
 if __name__ == "__main__":
     emg = EMG("Pelayo", "./Data/EMG_Pelayo.txt", "./csv/EMG/EMG_Pelayo.csv")
 
-    #Grafico inicial
-    emg.graph()
-
     #Limpieza de datos
     data_cleaned = emg.clean()
     outliers = emg.outliers(data_cleaned)
     group = emg.group(outliers)
 
+    #Grafico inicial
+    emg.graph()
+
     #Grafico agrupando las frecuencias y tomamdo la media
-    emg.plot(group)
+    #emg.plot(group)
 
