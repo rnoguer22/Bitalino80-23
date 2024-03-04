@@ -2,12 +2,18 @@ import pandas as pd
 from scipy.signal import medfilt
 from scipy.signal import find_peaks
 import numpy as np
+from opensignalsreader import OpenSignalsReader
+
+#Graficar los datos en crudo de los 4 desde el txt guardado en DataNew
+signal = OpenSignalsReader('DataNew/EDA_pela.txt')
+time, data = signal.get_data()
+
 
 #cargar csv
-eda_esther = pd.read_csv('csv/EDA/EDA_Esther.csv')
-eda_moyis = pd.read_csv('csv/EDA/EDA_Moyis.csv')
-eda_pelayo = pd.read_csv('csv/EDA/EDA_Pelayo.csv')
-eda_teresa = pd.read_csv('csv/EDA/EDA_Teresa.csv')
+eda_esther = pd.read_csv('csv/EDA/EDA_Esth.csv')
+eda_moyis = pd.read_csv('csv/EDA/EDA_moyi.csv')
+eda_pelayo = pd.read_csv('csv/EDA/EDA_pela.csv')
+eda_teresa = pd.read_csv('csv/EDA/EDA_tere.csv')
 
 #Funcion para preprocesar los datos (filtrado y normalización)
 def preprocesar_eda(data):
