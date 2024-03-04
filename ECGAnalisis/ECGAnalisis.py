@@ -29,14 +29,12 @@ class ECG2:
         files = os.listdir(txt_path)
         for file in files:
             if file[-3:] == 'txt' and file[:3] == 'ECG':
-                signals = OpenSignalsReader(txt_path)
+                signals = OpenSignalsReader(txt_path + file)
                 signals.plot()
                 if file[-5] == '2':
                     plt.show()
-                    plt.savefig(f'./ECGAnalisis/ECG2/raw_img/{file[:-4]}_raw.png')
                 else:
                     plt.show()
-                    plt.savefig(f'./ECGAnalisis/ECG/raw_img/{file[:-4]}_raw.png')
 
 
     def get_num_segments(self, cleaned_signal, seconds=10, sampling_rate=100):
