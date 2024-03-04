@@ -18,7 +18,10 @@ class ECG2:
     
 
     def get_name(self):
-        return self.data_path[15:-6]
+        if 'ECG2' in self.data_path:
+            return self.data_path[15:-6]
+        elif 'ECG' in self.data_path:
+            return self.data_path[14:-4]
     
 
     def get_num_segments(self, cleaned_signal, seconds=10, sampling_rate=100):
@@ -35,7 +38,7 @@ class ECG2:
 
 
     #Metodo para graficar la señal de ECG y los picos R identificados
-    def plot_peaks(self, sampling_rate=100):
+    def plot_peaks(self, dir_img, sampling_rate=100):
         cleaned_signal = self.data_cleaning()['A2'].values
 
         num_segments = self.get_num_segments(cleaned_signal)
@@ -58,7 +61,7 @@ class ECG2:
             plt.title('ECG {} con Picos R Identificados'.format(self.get_name()))
             plt.xlabel('Muestras')
             plt.ylabel('Amplitud')
-            plt.savefig('./ECGAnalisis/ECG2/img/{}_ECG_peaks.png'.format(self.get_name()))
+            plt.savefig('{}{}_ECG_peaks.png'.format(dir_img, self.get_name()))
             avg_heart_rate = np.mean(heart_rates)
             print('\nFrecuencia cardiaca media {}: {} latidos por minuto'.format(self.get_name(), avg_heart_rate))
         else:
@@ -94,13 +97,12 @@ class ECG2:
 
     
     #Metodo para obtener los resultados de cada usuario
-    def get_results(self):
-        directory = './csv/ECG2/'
-        files = os.listdir(directory)
+    def get_results(self, dir_csv, dir_img):
+        files = os.listdir(dir_csv)
         for file in files:
-            dir_ = directory + file
+            dir_ = dir_csv + file
             ecg2 = ECG2(dir_)
-            peaks = ecg2.plot_peaks() 
+            peaks = ecg2.plot_peaks(dir_img) 
             qt, t, p = ecg2.get_params(peaks)
             print('Intervalo QT promedio:', qt, 'segundos')
             print('Duración promedio de la onda T:', t, 'segundos')
@@ -108,4 +110,6 @@ class ECG2:
 
 
 if __name__ == '__main__':
-    ECG2.get_results(ECG2)
+    ECG2.get_results(ECG2, './csv/ECG2/', './ECGAnalisis/ECG2/img/')
+    print('\n------------------------------------------')
+    ECG2.get_results(ECG2, './csv/ECG/', './ECGAnalisis/ECG/img/')
