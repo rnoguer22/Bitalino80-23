@@ -3,6 +3,7 @@ import numpy as np
 from scipy.signal import find_peaks
 import matplotlib.pyplot as plt
 import os
+from opensignalsreader import OpenSignalsReader
 
 
 
@@ -22,7 +23,21 @@ class ECG2:
             return self.data_path[15:-6]
         elif 'ECG' in self.data_path:
             return self.data_path[14:-4]
+        
     
+    def plot_raw_data(self, txt_path):
+        files = os.listdir(txt_path)
+        for file in files:
+            if file[-3:] == 'txt' and file[:3] == 'ECG':
+                signals = OpenSignalsReader(txt_path)
+                signals.plot()
+                if file[-5] == '2':
+                    plt.show()
+                    plt.savefig(f'./ECGAnalisis/ECG2/raw_img/{file[:-4]}_raw.png')
+                else:
+                    plt.show()
+                    plt.savefig(f'./ECGAnalisis/ECG/raw_img/{file[:-4]}_raw.png')
+
 
     def get_num_segments(self, cleaned_signal, seconds=10, sampling_rate=100):
         window_size = sampling_rate * seconds
@@ -110,6 +125,7 @@ class ECG2:
 
 
 if __name__ == '__main__':
+    ECG2.plot_raw_data(ECG2, './Data/')
     ECG2.get_results(ECG2, './csv/ECG2/', './ECGAnalisis/ECG2/img/')
     print('\n------------------------------------------')
     ECG2.get_results(ECG2, './csv/ECG/', './ECGAnalisis/ECG/img/')
