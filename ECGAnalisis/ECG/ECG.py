@@ -1,55 +1,36 @@
-from scipy.signal import find_peaks
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import os
 
+def clean_ecg_signal(signal, window_size=3):
+    #Aplica un suavizado a la señal de ECG usando un promedio móvil
+    return signal.rolling(window=window_size).mean().dropna()
 
-class ECG:
+def plot_and_save_ecg(filename, save_dir):
+    #Genera una gráfica de la señal de ECG y guarda la imagen en el directorio
+    df = pd.read_csv(filename)
 
-    def __init__(self, data_path):
-        self.data_path = data_path
-        self.df = pd.read_csv(data_path)
-        #columns: nSeq,I1,I2,O1,O2,A2
-        self.df.columns = ['nSeq','I1','I2','O1','O2','A2']
+    ecg_cleaned = clean_ecg_signal(df['A2'])
 
-    def get_names(self):
-        return self.data_path.split('/')[-1][:-4]
-    
-    def plot_peaks(self):
-        ecg_data = self.df['A2'].values 
-        # Encuentramos los picos R en la señal de ECG
-        self.peaks, _ = find_peaks(ecg_data, height=0)
+    ecg_segment = ecg_cleaned.iloc[:1500]
 
-        #Guardamos la grafica del ECG y los picos
-        plt.figure(figsize=(12, 6))
-        plt.plot(ecg_data, color='blue')
-        plt.plot(self.peaks, ecg_data[self.peaks], "x", color='red', markersize=10)
-        plt.title(' {} con Picos R Identificados'.format(self.get_names()))
-        plt.xlabel('Muestras')
-        plt.ylabel('Amplitud')
-        plt.savefig('./ECGAnalisis/ECG/img/{}_peaks.png'.format(self.get_names()))
+    plt.figure(figsize=(12, 6))
+    plt.plot(ecg_segment, color='blue')
+    plt.title(f'ECG Clean Signal from {os.path.basename(filename)}')
+    plt.xlabel('Muestras')
+    plt.ylabel('Amplitud')
 
-    def plot_ecg(self):
-        ecg_data = self.df['A2'].values 
-        plt.figure(figsize=(12, 6))
-        plt.plot(ecg_data, label='ECG')
-        plt.title(' {}'.format(self.get_names()))
-        plt.xlabel('Muestras')
-        plt.ylabel('Amplitud')
-        plt.savefig('./ECGAnalisis/ECG/img/{}.png'.format(self.get_names()))
-
-    def get_cardio_freq(self, tiempo):
-        num_muestras = self.df.shape[0]
-        frecuencia_muestreo = num_muestras / tiempo  
-        # Calcula la frecuencia cardíaca utilizando los picos de la señal
-        tiempo_entre_picos = np.diff(self.peaks)
-        frecuencia_cardiaca = 60 / (np.mean(tiempo_entre_picos) / frecuencia_muestreo)
-        return round(frecuencia_cardiaca, 2)
+    save_path = os.path.join(save_dir, f'{os.path.basename(filename).replace(".csv", "_clean.png")}')
+    plt.savefig(save_path)
+    plt.close()
 
 if __name__ == '__main__':
-    data_path = './csv/ECG/ECG_Esther.csv'
-    ecg = ECG(data_path)
-    ecg.plot_peaks()
-    frecuencia_cardiaca = ecg.get_cardio_freq(360)
-    print(f"Frecuencia cardiaca: {frecuencia_cardiaca} bpm")
-    ecg.plot_ecg()
+    ecg_files = ['ECG_Esther.csv', 'ECG_Moyis.csv', 'ECG_Pelayo.csv', 'ECG_Teresa.csv']
+    csv_dir = 'csv/ECG'
+    save_dir = 'ECGAnalisis/ECG/img'
+
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
+    for ecg_file in ecg_files:
+        plot_and_save_ecg(os.path.join(csv_dir, ecg_file), save_dir)
