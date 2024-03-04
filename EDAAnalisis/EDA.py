@@ -3,11 +3,22 @@ from scipy.signal import medfilt
 from scipy.signal import find_peaks
 import numpy as np
 from opensignalsreader import OpenSignalsReader
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 #Graficar los datos en crudo de los 4 desde el txt guardado en DataNew
-signal = OpenSignalsReader('DataNew/EDA_pela.txt')
-time, data = signal.get_data()
+signals = [
+    'DataNew/EDA_Esth.txt',
+    'DataNew/EDA_moyi.txt',
+    'DataNew/EDA_pela.txt',
+    'DataNew/EDA_tere.txt'
+]
 
+for index, signal_file in enumerate(signals):
+    signal = OpenSignalsReader(signal_file)
+    signal.plot()
+    plt.savefig(f'EDAAnalisis/img/raw_signal_{index}.png')
+    plt.close()
 
 #cargar csv
 eda_esther = pd.read_csv('csv/EDA/EDA_Esth.csv')
@@ -84,8 +95,7 @@ print("Classification Report:")
 print(report)
 
 #VISUALIZACIÓN RESULTADOS
-import matplotlib.pyplot as plt
-import seaborn as sns
+
 #preparar datos para visualización
 eda_concat = pd.concat([
     eda_esther[['A3_preprocesado']].assign(Subject='Esther'),
@@ -107,6 +117,7 @@ plt.title('EDA Signal Over Time by Subject')
 plt.xlabel('Time (arbitrary units)')
 plt.ylabel('Normalized EDA')
 plt.legend(title='Subject')
+plt.savefig('EDAAnalisis/img/eda_time_series.png')
 plt.show()
 
 #histograma de número de picos
@@ -115,6 +126,7 @@ sns.histplot(data=features_df, x='Number of Peaks', hue='Subject', element='step
 plt.title('Distribution of Number of Peaks')
 plt.xlabel('Number of Peaks')
 plt.ylabel('Count')
+plt.savefig('EDAAnalisis/img/eda_histogram.png') 
 plt.show()
 
 #box plot de altura promedio de los picos
@@ -123,6 +135,7 @@ sns.boxplot(data=features_df, x='Subject', y='Average Peak Height', palette='tab
 plt.title('Average Peak Height by Subject')
 plt.xlabel('Subject')
 plt.ylabel('Average Peak Height')
+plt.savefig('EDAAnalisis/img/eda_boxplot.png')
 plt.show()
 
 #scatter plot de número de picos vs altura promedio
@@ -132,4 +145,5 @@ plt.title('Number of Peaks vs. Average Peak Height')
 plt.xlabel('Number of Peaks')
 plt.ylabel('Average Peak Height')
 plt.legend(title='Subject')
+plt.savefig('EDAAnalisis/img/eda_scatterplot.png')
 plt.show()
