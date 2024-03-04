@@ -76,3 +76,54 @@ report = classification_report(y, y_pred)
 print(f"Accuracy: {accuracy}\n")
 print("Classification Report:")
 print(report)
+
+#VISUALIZACIÓN RESULTADOS
+import matplotlib.pyplot as plt
+import seaborn as sns
+#preparar datos para visualización
+eda_concat = pd.concat([
+    eda_esther[['A3_preprocesado']].assign(Subject='Esther'),
+    eda_moyis[['A3_preprocesado']].assign(Subject='Moyis'),
+    eda_pelayo[['A3_preprocesado']].assign(Subject='Pelayo'),
+    eda_teresa[['A3_preprocesado']].assign(Subject='Teresa')
+], axis=0).reset_index()
+
+features_df = pd.DataFrame({
+    'Subject': ['Esther', 'Moyis', 'Pelayo', 'Teresa'],
+    'Number of Peaks': [caracteristicas_esther[0], caracteristicas_moyis[0], caracteristicas_pelayo[0], caracteristicas_teresa[0]],
+    'Average Peak Height': [caracteristicas_esther[1], caracteristicas_moyis[1], caracteristicas_pelayo[1], caracteristicas_teresa[1]]
+})
+
+#gráfico de series temporales para EDA
+plt.figure(figsize=(16, 6))
+sns.lineplot(data=eda_concat, x='index', y='A3_preprocesado', hue='Subject', palette='tab10', linewidth=2)
+plt.title('EDA Signal Over Time by Subject')
+plt.xlabel('Time (arbitrary units)')
+plt.ylabel('Normalized EDA')
+plt.legend(title='Subject')
+plt.show()
+
+#histograma de número de picos
+plt.figure(figsize=(12, 6))
+sns.histplot(data=features_df, x='Number of Peaks', hue='Subject', element='step', palette='tab10', bins=10)
+plt.title('Distribution of Number of Peaks')
+plt.xlabel('Number of Peaks')
+plt.ylabel('Count')
+plt.show()
+
+#box plot de altura promedio de los picos
+plt.figure(figsize=(12, 6))
+sns.boxplot(data=features_df, x='Subject', y='Average Peak Height', palette='tab10')
+plt.title('Average Peak Height by Subject')
+plt.xlabel('Subject')
+plt.ylabel('Average Peak Height')
+plt.show()
+
+#scatter plot de número de picos vs altura promedio
+plt.figure(figsize=(12, 6))
+sns.scatterplot(data=features_df, x='Number of Peaks', y='Average Peak Height', hue='Subject', s=100, palette='tab10')
+plt.title('Number of Peaks vs. Average Peak Height')
+plt.xlabel('Number of Peaks')
+plt.ylabel('Average Peak Height')
+plt.legend(title='Subject')
+plt.show()
