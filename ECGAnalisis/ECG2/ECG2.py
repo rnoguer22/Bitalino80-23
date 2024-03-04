@@ -43,13 +43,11 @@ class ECG2:
         if num_segments > 0:
             segments = np.array_split(cleaned_signal, num_segments)
             heart_rates = []
-
-            qt_intervals = []
-            t_wave_durations = []
-            p_wave_durations = []
+            peaks_list = []
 
             for _, segment in enumerate(segments):
                 peaks, _ = find_peaks(segment, distance=sampling_rate/2)
+                peaks_list.append(peaks)
                 heart_rate = self.get_cardio_freq(peaks, sampling_rate)
                 heart_rates.append(heart_rate)
                 #Guardamos la grafica del ECG y los picos
@@ -57,28 +55,16 @@ class ECG2:
                 plt.plot(segment, color='blue')
                 plt.plot(peaks, segment[peaks], "x", color='red', markersize=10)
 
-                #Calcular intervalo QT, onda T y onda P
-                for j in range(len(peaks) - 1):
-                    qt_intervals.append((peaks[j + 1] - peaks[j]) / sampling_rate)
-                    t_wave_durations.append((peaks[j + 1] - peaks[j]) / sampling_rate)
-                    if j > 0:
-                        p_wave_durations.append((peaks[j] - peaks[j - 1]) / sampling_rate)
-            
-            avg_qt_interval = np.mean(qt_intervals)
-            avg_t_wave_duration = np.mean(t_wave_durations)
-            avg_p_wave_duration = np.mean(p_wave_durations)
-
             plt.title('ECG {} con Picos R Identificados'.format(self.get_name()))
             plt.xlabel('Muestras')
             plt.ylabel('Amplitud')
             plt.savefig('./ECGAnalisis/ECG2/img/{}_ECG_peaks.png'.format(self.get_name()))
             avg_heart_rate = np.mean(heart_rates)
             print('\nFrecuencia cardiaca media {}: {} latidos por minuto'.format(self.get_name(), avg_heart_rate))
-            print('Intervalo QT promedio:', avg_qt_interval, 'segundos')
-            print('Duración promedio de la onda T:', avg_t_wave_duration, 'segundos')
-            print('Duración promedio de la onda P:', avg_p_wave_duration, 'segundos')
         else:
             print(f'No hay suficientes datos de {self.get_name()} para formar 10 s.')
+        return peaks_list
+
     
 
     #Metodo para obtener la frecuencia cardíaca
@@ -88,6 +74,24 @@ class ECG2:
         frecuencia_cardiaca = 60 / np.mean(rr_intervals)
         return round(frecuencia_cardiaca)
 
+
+    #Metodo para calcular intervalo QT, onda T y onda P
+    def get_params(self, peaks:list, sampling_rate=100):
+        qt_intervals = []
+        t_wave_durations = []
+        p_wave_durations = []
+        for peak in peaks:
+                for j in range(len(peak) - 1):
+                    qt_intervals.append((peak[j + 1] - peak[j]) / sampling_rate)
+                    t_wave_durations.append((peak[j + 1] - peak[j]) / sampling_rate)
+                    if j > 0:
+                        p_wave_durations.append((peak[j] - peak[j - 1]) / sampling_rate)
+            
+        avg_qt_interval = np.mean(qt_intervals)
+        avg_t_wave_duration = np.mean(t_wave_durations)
+        avg_p_wave_duration = np.mean(p_wave_durations)
+        return round(avg_qt_interval, 6), round(avg_t_wave_duration, 6), round(avg_p_wave_duration, 6)
+
     
     #Metodo para obtener los resultados de cada usuario
     def get_results(self):
@@ -96,8 +100,11 @@ class ECG2:
         for file in files:
             dir_ = directory + file
             ecg2 = ECG2(dir_)
-            ecg2.plot_peaks()    
-
+            peaks = ecg2.plot_peaks() 
+            qt, t, p = ecg2.get_params(peaks)
+            print('Intervalo QT promedio:', qt, 'segundos')
+            print('Duración promedio de la onda T:', t, 'segundos')
+            print('Duración promedio de la onda P:', p, 'segundos')
 
 
 if __name__ == '__main__':
