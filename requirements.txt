@@ -4,4 +4,3 @@ matplotlib
 opensignals
 opensignalsreader
 scipy
-biosppy
