@@ -70,7 +70,7 @@ class EMG():
 if __name__ == "__main__":
     emgP = EMG("Pelayo", "./Data/EMG_Pelayo.txt", "./csv/EMG/EMG_Pelayo.csv")
     emgE = EMG("Esther", "./Data/EMG_Esther.txt", "./csv/EMG/EMG_Esther.csv")
-    emgT = EMG("Teresa", "./Data/EMG_Teresa.txt", "./csv/EMG/EMG_Teresa.csv")
+    emgT = EMG("Teresa", "./Data/EMG_tere2.txt", "./csv/EMG/EMG_tere2.csv")
     emgM = EMG("Moyis", "./Data/EMG_Moyis.txt", "./csv/EMG/EMG_Moyis.csv")
 
     #Limpieza de datos
