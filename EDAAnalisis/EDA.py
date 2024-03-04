@@ -45,3 +45,34 @@ caracteristicas_teresa = extraer_caracteristicas_eda(eda_teresa['A3_preprocesado
 
 #visualizar
 print(caracteristicas_esther, caracteristicas_moyis, caracteristicas_pelayo, caracteristicas_teresa)
+
+#Aplicar modelo de clasificacion 
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, classification_report
+
+#crear conjunto de datos
+features = np.array([
+    extraer_caracteristicas_eda(eda_esther['A3_preprocesado']),
+    extraer_caracteristicas_eda(eda_moyis['A3_preprocesado']),
+    extraer_caracteristicas_eda(eda_pelayo['A3_preprocesado']),
+    extraer_caracteristicas_eda(eda_teresa['A3_preprocesado'])
+])
+
+#etiquetas(simples si no igual no sale)
+# 1:(alta reactividad) si numero de picos mayor a 25(ya que hay 2 con 16, 1 con 30 y otro con 142), 0:(baja reactividad)
+y = np.array([1 if features[i][0] > 25 else 0 for i in range(len(features))])
+
+#crear modelo
+modelo = DecisionTreeClassifier(random_state=42)
+modelo.fit(features, y)
+
+#prediccion
+y_pred = modelo.predict(features)
+
+#evaluar el modelo  
+accuracy = accuracy_score(y, y_pred)
+report = classification_report(y, y_pred)
+
+print(f"Accuracy: {accuracy}\n")
+print("Classification Report:")
+print(report)
