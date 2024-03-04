@@ -62,25 +62,44 @@ class EMG():
         plt.ylabel('Amplitud')
         plt.title('Señales de EMG de {}'.format(self.nombre))
         plt.legend()
-        #plt.savefig('EMGAnalisis/img/EMG_{}_media.png'.format(self.nombre))
+        plt.savefig('EMGAnalisis/img/{}_EMG.png'.format(self.nombre))
         plt.show()
 
 
 
 if __name__ == "__main__":
-    emg = EMG("Pelayo", "./Data/EMG_Pelayo.txt", "./csv/EMG/EMG_Pelayo.csv")
-
-    
+    emgP = EMG("Pelayo", "./Data/EMG_Pelayo.txt", "./csv/EMG/EMG_Pelayo.csv")
+    emgE = EMG("Esther", "./Data/EMG_Esther.txt", "./csv/EMG/EMG_Esther.csv")
+    emgT = EMG("Teresa", "./Data/EMG_Teresa.txt", "./csv/EMG/EMG_Teresa.csv")
+    emgM = EMG("Moyis", "./Data/EMG_Moyis.txt", "./csv/EMG/EMG_Moyis.csv")
 
     #Limpieza de datos
-    #data_cleaned = emg.clean()
-    #outliers = emg.outliers(data_cleaned)
-    #emg.preprocessing(outliers)
+    emgP.clean()
+    emgE.clean()
+    emgT.clean()
+    emgM.clean()
+
+    #Eliminacion de outliers
+    emgP.outliers(emgP.data)
+    emgE.outliers(emgE.data)
+    emgT.outliers(emgT.data)
+    emgM.outliers(emgM.data)
     
-
     #Grafico inicial
-    emg.preprocessing()
+    emgP.raw()
+    emgE.raw()
+    emgT.raw()
+    emgM.raw()
 
-    #Grafico agrupando las frecuencias y tomamdo la media
-    #emg.plot(group)
+    #Preprocesamiento
+    emgP.preprocessing()
+    emgE.preprocessing()
+    emgT.preprocessing()
+    emgM.preprocessing()
+
+    #Grafico preprocesado
+    emgP.plot(emgP.data)
+    emgE.plot(emgE.data)
+    emgT.plot(emgT.data)
+    emgM.plot(emgM.data)
 

@@ -5,6 +5,7 @@ from scipy.signal import butter, lfilter
 from opensignalsreader import OpenSignalsReader
 
 signal = OpenSignalsReader('./Data/EMG_Teresa.txt')
+signal.plot()
 
 dataP = pd.read_csv('./csv/EMG/EMG_Pelayo.csv', header = 0)
 dataE = pd.read_csv('./csv/EMG/EMG_Esther.csv', header = 0)
@@ -38,8 +39,8 @@ yE = dataE['A1']
 yT = dataT['A1']
 yM = dataM['A1']
 
-plt.figure(figsize=(13, 5))
-plt.plot(yP, label='Pelayo')
+"""plt.figure(figsize=(13, 5))
+#plt.plot(yP, label='Pelayo')
 #plt.plot(yE, label='Esther')
 #plt.plot(yT, label='Teresa')
 #plt.plot(yM, label='Moyis')
@@ -47,4 +48,4 @@ plt.title('Señal EMG')
 plt.xlabel('Tiempo')
 plt.ylabel('Amplitud')
 plt.legend()
-plt.show()
+plt.show()"""
