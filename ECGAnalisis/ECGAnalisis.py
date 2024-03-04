@@ -31,10 +31,6 @@ class ECG2:
             if file[-3:] == 'txt' and file[:3] == 'ECG':
                 signals = OpenSignalsReader(txt_path + file)
                 signals.plot()
-                if file[-5] == '2':
-                    plt.show()
-                else:
-                    plt.show()
 
 
     def get_num_segments(self, cleaned_signal, seconds=10, sampling_rate=100):
