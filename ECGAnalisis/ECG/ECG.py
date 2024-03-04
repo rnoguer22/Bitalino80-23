@@ -24,10 +24,19 @@ class ECG:
         plt.figure(figsize=(12, 6))
         plt.plot(ecg_data, color='blue')
         plt.plot(self.peaks, ecg_data[self.peaks], "x", color='red', markersize=10)
-        plt.title('ECG {} con Picos R Identificados'.format(self.get_names()))
+        plt.title(' {} con Picos R Identificados'.format(self.get_names()))
         plt.xlabel('Muestras')
         plt.ylabel('Amplitud')
-        plt.savefig('./ECGAnalisis/ECG/img/{}_ECG_peaks.png'.format(self.get_names()))
+        plt.savefig('./ECGAnalisis/ECG/img/{}_peaks.png'.format(self.get_names()))
+
+    def plot_ecg(self):
+        ecg_data = self.df['A2'].values 
+        plt.figure(figsize=(12, 6))
+        plt.plot(ecg_data, label='ECG')
+        plt.title(' {}'.format(self.get_names()))
+        plt.xlabel('Muestras')
+        plt.ylabel('Amplitud')
+        plt.savefig('./ECGAnalisis/ECG/img/{}.png'.format(self.get_names()))
 
     def get_cardio_freq(self, tiempo):
         num_muestras = self.df.shape[0]
@@ -42,4 +51,5 @@ if __name__ == '__main__':
     ecg = ECG(data_path)
     ecg.plot_peaks()
     frecuencia_cardiaca = ecg.get_cardio_freq(360)
-    print(f"frecuencia_cardiaca: {frecuencia_cardiaca} bpm")
+    print(f"Frecuencia cardiaca: {frecuencia_cardiaca} bpm")
+    ecg.plot_ecg()
