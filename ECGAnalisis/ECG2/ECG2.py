@@ -44,7 +44,11 @@ class ECG2:
             segments = np.array_split(cleaned_signal, num_segments)
             heart_rates = []
 
-            for i, segment in enumerate(segments):
+            qt_intervals = []
+            t_wave_durations = []
+            p_wave_durations = []
+
+            for _, segment in enumerate(segments):
                 peaks, _ = find_peaks(segment, distance=sampling_rate/2)
                 heart_rate = self.get_cardio_freq(peaks, sampling_rate)
                 heart_rates.append(heart_rate)
@@ -53,12 +57,26 @@ class ECG2:
                 plt.plot(segment, color='blue')
                 plt.plot(peaks, segment[peaks], "x", color='red', markersize=10)
 
+                #Calcular intervalo QT, onda T y onda P
+                for j in range(len(peaks) - 1):
+                    qt_intervals.append((peaks[j + 1] - peaks[j]) / sampling_rate)
+                    t_wave_durations.append((peaks[j + 1] - peaks[j]) / sampling_rate)
+                    if j > 0:
+                        p_wave_durations.append((peaks[j] - peaks[j - 1]) / sampling_rate)
+            
+            avg_qt_interval = np.mean(qt_intervals)
+            avg_t_wave_duration = np.mean(t_wave_durations)
+            avg_p_wave_duration = np.mean(p_wave_durations)
+
             plt.title('ECG {} con Picos R Identificados'.format(self.get_name()))
             plt.xlabel('Muestras')
             plt.ylabel('Amplitud')
             plt.savefig('./ECGAnalisis/ECG2/img/{}_ECG_peaks.png'.format(self.get_name()))
             avg_heart_rate = np.mean(heart_rates)
-            print('Frecuencia cardiaca media {}: {} latidos por minuto'.format(self.get_name(), avg_heart_rate))
+            print('\nFrecuencia cardiaca media {}: {} latidos por minuto'.format(self.get_name(), avg_heart_rate))
+            print('Intervalo QT promedio:', avg_qt_interval, 'segundos')
+            print('Duración promedio de la onda T:', avg_t_wave_duration, 'segundos')
+            print('Duración promedio de la onda P:', avg_p_wave_duration, 'segundos')
         else:
             print(f'No hay suficientes datos de {self.get_name()} para formar 10 s.')
     
