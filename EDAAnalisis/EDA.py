@@ -17,8 +17,6 @@ signals = [
 for index, signal_file in enumerate(signals):
     signal = OpenSignalsReader(signal_file)
     signal.plot()
-    plt.savefig(f'EDAAnalisis/img/raw_signal_{index}.png')
-    plt.close()
 
 #cargar csv
 eda_esther = pd.read_csv('csv/EDA/EDA_Esth.csv')
