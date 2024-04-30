@@ -108,7 +108,9 @@ class ECG2:
     #Metodo para obtener los resultados de cada usuario
     def get_results(self, dir_csv, dir_img):
         files = os.listdir(dir_csv)
+        df = pd.DataFrame()
         for file in files:
+            print('\n', file)
             dir_ = dir_csv + file
             ecg2 = ECG2(dir_)
             peaks = ecg2.plot_peaks(dir_img) 
@@ -116,6 +118,12 @@ class ECG2:
             print('Intervalo QT promedio:', qt, 'segundos')
             print('Duración promedio de la onda T:', t, 'segundos')
             print('Duración promedio de la onda P:', p, 'segundos')
+
+            new_df = pd.DataFrame({'Intervalo QT': [qt], 'Duración Onda T': [t], 'Duración Onda P': [p]})
+            df = pd.concat([df, new_df], ignore_index=True)
+        df.to_csv('./csv/summary.csv', index=False)
+    
+
 
 
 if __name__ == '__main__':
