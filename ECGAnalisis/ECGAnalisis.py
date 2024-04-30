@@ -110,24 +110,28 @@ class ECG2:
         files = os.listdir(dir_csv)
         df = pd.DataFrame()
         for file in files:
-            print('\n', file)
             dir_ = dir_csv + file
             ecg2 = ECG2(dir_)
             peaks = ecg2.plot_peaks(dir_img) 
             qt, t, p = ecg2.get_params(peaks)
-            print('Intervalo QT promedio:', qt, 'segundos')
+            print('Intervalo QT promedio:', qt, 'segundos   ')
             print('Duración promedio de la onda T:', t, 'segundos')
             print('Duración promedio de la onda P:', p, 'segundos')
-
             new_df = pd.DataFrame({'Intervalo QT': [qt], 'Duración Onda T': [t], 'Duración Onda P': [p]})
             df = pd.concat([df, new_df], ignore_index=True)
-        df.to_csv('./csv/summary.csv', index=False)
-    
+        return df
 
+
+    def concat_dfs(self, df1, df2):
+        concated_df = pd.concat([df1, df2], ignore_index=True)
+        concated_df.to_csv('./csv/summary.csv', index=False)
+        return concated_df
+    
 
 
 if __name__ == '__main__':
     ECG2.plot_raw_data(ECG2, './Data/')
-    ECG2.get_results(ECG2, './csv/ECG2/', './ECGAnalisis/ECG2/img/')
+    df1 = ECG2.get_results(ECG2, './csv/ECG2/', './ECGAnalisis/ECG2/img/')
     print('\n------------------------------------------')
-    ECG2.get_results(ECG2, './csv/ECG/', './ECGAnalisis/ECG/img/')
+    df2 = ECG2.get_results(ECG2, './csv/ECG/', './ECGAnalisis/ECG/img/')
+    print(ECG2.concat_dfs(ECG2, df1, df2))
