@@ -86,11 +86,11 @@ class Heart_Desease():
         ax.set_title('Target variable distribution', fontsize=20, y=1.05)
         sns.despine(right=True)
         sns.despine(offset=5, trim=True)
-        plt.show()
+        plt.savefig('./img/target_distribution.png')
 
 
 
-heart_des = Heart_Desease('./heart.csv')
+heart_des = Heart_Desease('./csv/heart.csv')
 heart_des.drop_data()
 heart_des.rename_columns()
 heart_des.rename_data()
