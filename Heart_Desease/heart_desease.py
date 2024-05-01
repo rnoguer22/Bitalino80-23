@@ -1,4 +1,7 @@
+import warnings
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 
@@ -8,6 +11,10 @@ class Heart_Desease():
     def __init__(self, data_path):
         self.data_path = data_path
         self.data = pd.read_csv(data_path)
+        warnings.filterwarnings('ignore')
+
+    def get_data(self):
+        return self.data
     
 
     #Metodo para eliminar datos incorrectos (ca y thal)
@@ -61,10 +68,31 @@ class Heart_Desease():
         self.data['thalassemia'][self.data['thalassemia'] == 3] = 'reversable defect'
     
 
+    #Metodo para ver las personas con enfermedades cardiovasculares
+    def show_target_distribution(self, data):
+        #Definimos una paleta de colores para usar en el grafico
+        mypal= ['#FC05FB', '#FEAEFE', '#FCD2FC','#F3FEFA', '#B4FFE4','#3FFEBA']
+        plt.figure(figsize=(7, 5),facecolor='#F6F5F4')
+        total = float(len(data))
+        #De la columna target, 0 son los que no tienen riesgo de enfermedad cardiovascular y 1 los que si
+        ax = sns.countplot(x=data['target'], palette=mypal[1::4])
+        ax.set_facecolor('#F6F5F4')
+
+        for p in ax.patches:
+            height = p.get_height()
+            ax.text(p.get_x()+p.get_width()/2.,height + 3,'{:1.1f} %'.format((height/total)*100), ha="center",
+                bbox=dict(facecolor='none', edgecolor='black', boxstyle='round', linewidth=0.5))
+            
+        ax.set_title('Target variable distribution', fontsize=20, y=1.05)
+        sns.despine(right=True)
+        sns.despine(offset=5, trim=True)
+        plt.show()
 
 
-heart_des = Heart_Desease('./Heart_Desease/heart.csv')
+
+heart_des = Heart_Desease('./heart.csv')
 heart_des.drop_data()
 heart_des.rename_columns()
 heart_des.rename_data()
-print(heart_des.data.head())
+data = heart_des.get_data()
+heart_des.show_target_distribution(data)
