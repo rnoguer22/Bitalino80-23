@@ -14,6 +14,12 @@ class Heart_Desease():
         self.data = pd.read_csv(data_path)
         #Definimos una paleta de colores para usar en los graficos
         self.mypal = ['#FC05FB', '#FEAEFE', '#FCD2FC','#F3FEFA', '#B4FFE4','#3FFEBA']
+        self.numeric_cols = ['age', 
+                            'cholesterol', 
+                            'resting_blood_pressure', 
+                            'max_heart_rate_achieved', 
+                            'st_depression', 
+                            'num_major_vessels'] 
         warnings.filterwarnings('ignore')
 
     def get_data(self):
@@ -94,9 +100,8 @@ class Heart_Desease():
 
     
     #Metodo para ver las graficas de los datos numericos del dataframe
-    def numeric_density_plots(self, data):
-        numeric_cols = data.select_dtypes(include=['number'], exclude=['bool']).columns.tolist()
-        L = len(numeric_cols)
+    def numeric_density_plots(self, data):       
+        L = len(self.numeric_cols)
         ncol= 2
         nrow= int(np.ceil(L/ncol))
         #remove_last= (nrow * ncol) - L
@@ -105,7 +110,7 @@ class Heart_Desease():
         fig.subplots_adjust(top=0.92)
 
         i = 1
-        for col in numeric_cols:
+        for col in self.numeric_cols:
             plt.subplot(nrow, ncol, i, facecolor='#F6F5F4')
             ax = sns.kdeplot(data=data, x=col, hue="target", multiple="stack", palette=self.mypal[1::4]) 
             ax.set_xlabel(col, fontsize=20)
@@ -118,10 +123,10 @@ class Heart_Desease():
                         height = p.get_height()
                         ax.text(p.get_x()+p.get_width()/2.,height + 3,'{:1.0f}'.format((height)),ha="center",
                             bbox=dict(facecolor='none', edgecolor='black', boxstyle='round', linewidth=0.5))
-            i = i +1
+            i += 1
 
         plt.suptitle('Distribution of Numerical Features' ,fontsize = 24)
-        plt.show()
+        plt.savefig('./img/num_density_plots.png')
 
 
 
