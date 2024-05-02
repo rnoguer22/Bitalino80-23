@@ -9,7 +9,7 @@ from scipy import stats
 
 
 
-class Heart_Desease_Analysis():
+class Heart_Analysis():
 
     def __init__(self, data_path):
         self.data_path = data_path
@@ -255,7 +255,7 @@ class Heart_Desease_Analysis():
 
 
 
-heart_des = Heart_Desease_Analysis('./csv/heart.csv')
+heart_des = Heart_Analysis('./csv/heart.csv')
 heart_des.drop_data()
 heart_des.rename_columns()
 heart_des.rename_data()
