@@ -194,6 +194,20 @@ class Heart_Desease():
         plt.suptitle('Reg plots of selected features')
         plt.legend()
         plt.savefig('./img/reg_plots.png')  
+    
+
+
+    #Obtenemos la matriz de correlacion de las variables numericas
+    def pearson_corr(self, data):
+        df_ = data[self.numeric_cols]
+        corr = df_.corr(method='pearson')
+        mask = np.triu(np.ones_like(corr, dtype=bool))
+        f, ax = plt.subplots(figsize=(8, 5), facecolor=None)
+        cmap = sns.color_palette(self.mypal, as_cmap=True)
+        sns.heatmap(corr, mask=mask, cmap=cmap, vmax=1.0, vmin=-1.0, center=0, annot=True,
+                    square=False, linewidths=.5, cbar_kws={"shrink": 0.75})
+        ax.set_title("Numerical features correlation (Pearson's)", fontsize=20, y= 1.05)
+        plt.savefig('./img/pearson_corr.png')
 
     
 
@@ -207,6 +221,7 @@ data = heart_des.get_data()
 #heart_des.save_describe(data)
 #heart_des.show_target_distribution(data)
 #heart_des.numeric_density_plots(data)
-heart_des.categorical_count_plots(data, heart_des.categorical_features[0:-1])
+#heart_des.categorical_count_plots(data, heart_des.categorical_features[0:-1])
 #heart_des.numeric_pairplot(data)
 #heart_des.reg_plots(data)
+heart_des.pearson_corr(data)
