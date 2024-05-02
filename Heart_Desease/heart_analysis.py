@@ -90,7 +90,7 @@ class Heart_Analysis():
 
     def save_describe(self, data):
         df = data.describe().T
-        df.to_csv('./csv/summary.csv')
+        df.to_csv('./csv/analysis/summary.csv')
 
 
 
@@ -110,7 +110,7 @@ class Heart_Analysis():
         ax.set_title('Target variable distribution', fontsize=20, y=1.05)
         sns.despine(right=True)
         sns.despine(offset=5, trim=True)
-        plt.savefig('./img/target_distribution.png')
+        plt.savefig('./img/analysis/target_distribution.png')
 
 
     
@@ -140,7 +140,7 @@ class Heart_Analysis():
                             bbox=dict(facecolor='none', edgecolor='black', boxstyle='round', linewidth=0.5))
             i += 1
         plt.suptitle('Distribution of Numerical Features' ,fontsize = 24)
-        plt.savefig('./img/num_density_plots.png')
+        plt.savefig('./img/analysis/num_density_plots.png')
 
 
     #Metodo para ver las graficas de las variables categoricas
@@ -170,7 +170,7 @@ class Heart_Analysis():
                     bbox=dict(facecolor='none', edgecolor='black', boxstyle='round', linewidth=0.5))
             i = i +1
         plt.suptitle('Distribution of Categorical Features' ,fontsize = 24)
-        plt.savefig('./img/cat_count_plots.png')
+        plt.savefig('./img/analysis/cat_count_plots.png')
     
 
 
@@ -179,7 +179,7 @@ class Heart_Analysis():
         cols = ['age', 'cholesterol', 'resting_blood_pressure', 'max_heart_rate_achieved', 'st_depression', 'target']
         sns.pairplot(data[cols], hue="target", corner=True, diag_kind='hist', palette=self.mypal[1::4]);
         plt.suptitle('Pairplot: Numerical Features ' ,fontsize = 24)
-        plt.savefig('./img/num_pairplot.png')
+        plt.savefig('./img/analysis/num_pairplot.png')
 
     
     #Sacamos las regplots para ver la interrelacion entre las variables
@@ -195,7 +195,7 @@ class Heart_Analysis():
         sns.regplot(data=data[data['target'] ==0], x='age', y='st_depression', ax = ax[3], color=self.mypal[5], label='0')
         plt.suptitle('Reg plots of selected features')
         plt.legend()
-        plt.savefig('./img/reg_plots.png')  
+        plt.savefig('./img/analysis/reg_plots.png')  
     
 
 
@@ -209,7 +209,7 @@ class Heart_Analysis():
         sns.heatmap(corr, mask=mask, cmap=cmap, vmax=1.0, vmin=-1.0, center=0, annot=True,
                     square=False, linewidths=.5, cbar_kws={"shrink": 0.75})
         ax.set_title("Numerical features correlation (Pearson's)", fontsize=20, y= 1.05)
-        plt.savefig('./img/pearson_corr.png')
+        plt.savefig('./img/analysis/pearson_corr.png')
     
 
 
@@ -249,22 +249,22 @@ class Heart_Analysis():
         sns.heatmap(corr, mask=mask, cmap=cmap, vmax=1.0, vmin=0, center=0, annot=True,
                     square=False, linewidths=.01, cbar_kws={"shrink": 0.75})
         ax.set_title("Categorical Features Correlation (Cramer's V)", fontsize=20, y= 1.05)
-        plt.savefig('./img/cramers_corr.png')
+        plt.savefig('./img/analysis/cramers_corr.png')
 
     
 
 
-
-heart_des = Heart_Analysis('./csv/heart.csv')
-heart_des.drop_data()
-heart_des.rename_columns()
-heart_des.rename_data()
-data = heart_des.get_data()
-#heart_des.save_describe(data)
-#heart_des.show_target_distribution(data)
-#heart_des.numeric_density_plots(data)
-#heart_des.categorical_count_plots(data, heart_des.categorical_features[0:-1])
-#heart_des.numeric_pairplot(data)
-#heart_des.reg_plots(data)
-#heart_des.pearson_corr(data)
-heart_des.cramers_corr(data, heart_des.categorical_features)
+if __name__ == '__main__':
+    heart_des = Heart_Analysis('./csv/heart.csv')
+    heart_des.drop_data()
+    heart_des.rename_columns()
+    heart_des.rename_data()
+    data = heart_des.get_data()
+    heart_des.save_describe(data)
+    heart_des.show_target_distribution(data)
+    heart_des.numeric_density_plots(data)
+    heart_des.categorical_count_plots(data, heart_des.categorical_features[0:-1])
+    heart_des.numeric_pairplot(data)
+    heart_des.reg_plots(data)
+    heart_des.pearson_corr(data)
+    heart_des.cramers_corr(data, heart_des.categorical_features)
