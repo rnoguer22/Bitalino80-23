@@ -65,11 +65,8 @@ class Heart_Pred(Heart_Analysis):
         return classifiers
 
 
-    def get_clean_data(self):
+    def get_data(self):
         heart_des = Heart_Analysis(self.data_path)
-        '''heart_des.drop_data()
-        heart_des.rename_columns()
-        heart_des.rename_data()'''
         return heart_des.get_data()
     
 
@@ -80,18 +77,6 @@ class Heart_Pred(Heart_Analysis):
         X = data[features]
         y = data['target']
         return train_test_split(X, y, test_size = test_size, random_state=self.seed)
-    
-
-    def label_encode_cat_features(self, data, cat_features):
-        '''
-        Given a dataframe and its categorical features, this function returns label-encoded dataframe
-        '''
-        label_encoder = LabelEncoder()
-        data_encoded = data.copy()
-        for col in cat_features:
-            data_encoded[col] = label_encoder.fit_transform(data[col])
-        data = data_encoded
-        return data
 
 
     def score_summary(self, names, classifiers, X_train, X_val, y_train, y_val):
@@ -155,7 +140,7 @@ class Heart_Pred(Heart_Analysis):
             ax.set_title(names[i])
             i += 1
         plt.tight_layout()
-        plt.show()
+        plt.savefig('./img/predictions/confusion_matrixes.png')
 
         
         
@@ -180,14 +165,14 @@ class Heart_Pred(Heart_Analysis):
             plt.ylabel('True Positive Rate')
             plt.title('Receiver operating characteristic (ROC) curves', fontsize=20)
             plt.legend(loc="lower right")       
-        plt.show()
+        plt.savefig('./img/predictions/roc_auc_curve.png')
     
 
 
 
 if __name__ == '__main__':
     heart_pred = Heart_Pred('./csv/heart.csv')
-    data = heart_pred.get_clean_data()
+    data = heart_pred.get_data()
     names = heart_pred.get_pred_names()
     classifiers = heart_pred.get_pred_classifiers()
     X_train, X_val, y_train, y_val = heart_pred.get_train_test(data)
