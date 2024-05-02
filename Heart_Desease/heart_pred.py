@@ -15,6 +15,9 @@ from sklearn.neural_network import MLPClassifier
 
 from sklearn.preprocessing import LabelEncoder
 import shap 
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
 
 from heart_analysis import Heart_Analysis
 
@@ -64,9 +67,9 @@ class Heart_Pred(Heart_Analysis):
 
     def get_clean_data(self):
         heart_des = Heart_Analysis(self.data_path)
-        heart_des.drop_data()
+        '''heart_des.drop_data()
         heart_des.rename_columns()
-        heart_des.rename_data()
+        heart_des.rename_data()'''
         return heart_des.get_data()
     
 
@@ -79,9 +82,109 @@ class Heart_Pred(Heart_Analysis):
         return train_test_split(X, y, test_size = test_size, random_state=self.seed)
     
 
+    def label_encode_cat_features(self, data, cat_features):
+        '''
+        Given a dataframe and its categorical features, this function returns label-encoded dataframe
+        '''
+        label_encoder = LabelEncoder()
+        data_encoded = data.copy()
+        for col in cat_features:
+            data_encoded[col] = label_encoder.fit_transform(data[col])
+        data = data_encoded
+        return data
+
+
+    def score_summary(self, names, classifiers):
+        '''
+        Given a list of classiers, this function calculates the accuracy, 
+        ROC_AUC and Recall and returns the values in a dataframe
+        '''
+        
+        cols = ["Classifier", "Accuracy", "ROC_AUC", "Recall", "Precision", "F1"]
+        data_table = pd.DataFrame(columns=cols)
+        
+        for name, clf in zip(names, classifiers):        
+            clf.fit(X_train, y_train)
+            
+            pred = clf.predict(X_val)
+            accuracy = accuracy_score(y_val, pred)
+
+            pred_proba = clf.predict_proba(X_val)[:, 1]
+            
+            fpr, tpr, thresholds = roc_curve(y_val, pred_proba)        
+            roc_auc = auc(fpr, tpr)
+            
+            # confusion matric, cm
+            cm = confusion_matrix(y_val, pred) 
+            
+            # recall: TP/(TP+FN)
+            recall = cm[1,1]/(cm[1,1] +cm[1,0])
+            
+            # precision: TP/(TP+FP)
+            precision = cm[1,1]/(cm[1,1] +cm[0,1])
+            
+            # F1 score: TP/(TP+FP)
+            f1 = 2*recall*precision/(recall + precision)
+
+            df = pd.DataFrame([[name, accuracy*100, roc_auc, recall, precision, f1]], columns=cols)
+            data_table = data_table._append(df)     
+            
+        return(np.round(data_table.reset_index(drop=True), 2))
+
+
+    def plot_conf_matrix(self, names, classifiers, nrows, ncols, fig_a, fig_b):
+        '''
+        Plots confusion matrices in a subplots.
+        
+        Args:
+            names : list of names of the classifier
+            classifiers : list of classification algorithms
+            nrows, ncols : number of rows and rows in the subplots
+            fig_a, fig_b : dimensions of the figure size
+        '''
+        
+        fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(fig_a, fig_b))
+        i = 0
+        for clf, ax in zip(classifiers, axes.flatten()):
+            clf.fit(X_train, y_train)
+            plot_confusion_matrix(clf, X_val, y_val, ax=ax)
+            ax.title.set_text(names[i])
+            i = i + 1       
+        plt.tight_layout() 
+        plt.show()
+        
+        
+    def roc_auc_curve(self, names, classifiers):
+        '''
+        Given a list of classifiers, this function plots the ROC curves
+
+        '''       
+        plt.figure(figsize=(12, 8))   
+            
+        for name, clf in zip(names, classifiers):
+            clf.fit(X_train, y_train)
+            pred_proba = clf.predict_proba(X_val)[:, 1]
+            fpr, tpr, thresholds = roc_curve(y_val, pred_proba)
+            roc_auc = auc(fpr, tpr)
+            
+            plt.plot(fpr, tpr, lw=3, label= name +' ROC curve (area = %0.2f)' % (roc_auc))
+            plt.plot([0, 1], [0, 1], color='navy', lw=1, linestyle='--')
+            plt.xlim([0.0, 1.0])
+            plt.ylim([0.0, 1.0])
+            plt.xlabel('False Positive Rate')
+            plt.ylabel('True Positive Rate')
+            plt.title('Receiver operating characteristic (ROC) curves', fontsize=20)
+            plt.legend(loc="lower right")       
+        plt.show()
+    
+
 
 
 if __name__ == '__main__':
     heart_pred = Heart_Pred('./csv/heart.csv')
     data = heart_pred.get_clean_data()
+    names = heart_pred.get_pred_names()
+    classifiers = heart_pred.get_pred_classifiers()
     X_train, X_val, y_train, y_val = heart_pred.get_train_test(data)
+    print(heart_pred.score_summary(names, classifiers)) 
+    heart_pred.roc_auc_curve(names, classifiers)
