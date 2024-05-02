@@ -7,7 +7,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 
-from sklearn.metrics import confusion_matrix, plot_confusion_matrix, classification_report
+from sklearn.metrics import confusion_matrix
 from sklearn.metrics import recall_score, accuracy_score,roc_curve, auc
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -71,12 +71,12 @@ class Heart_Pred(Heart_Analysis):
     
 
     #Metodo para obtener el train y test de los datos
-    def train_test_split(self, data):
+    def get_train_test(self, data):
         test_size = 0.25
         features = data.columns[:-1]
         X = data[features]
         y = data['target']
-        return train_test_split(X, y, test_size = test_size, random_state=self.self.seed)
+        return train_test_split(X, y, test_size = test_size, random_state=self.seed)
     
 
 
@@ -84,4 +84,4 @@ class Heart_Pred(Heart_Analysis):
 if __name__ == '__main__':
     heart_pred = Heart_Pred('./csv/heart.csv')
     data = heart_pred.get_clean_data()
-    X_train, X_val, y_train, y_val = heart_pred.train_test_split()
+    X_train, X_val, y_train, y_val = heart_pred.get_train_test(data)
