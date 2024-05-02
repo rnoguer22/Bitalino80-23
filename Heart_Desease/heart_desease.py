@@ -3,6 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+from scipy import stats
+
 
 
 
@@ -208,6 +210,46 @@ class Heart_Desease():
                     square=False, linewidths=.5, cbar_kws={"shrink": 0.75})
         ax.set_title("Numerical features correlation (Pearson's)", fontsize=20, y= 1.05)
         plt.savefig('./img/pearson_corr.png')
+    
+
+
+    #Obtenemos la matriz de correlacion de las variables categoricas
+    def cramers_corr(self, data, cat_feats):
+        def cramers_v(x, y): 
+            confusion_matrix = pd.crosstab(x,y)
+            chi2 = stats.chi2_contingency(confusion_matrix)[0]
+            n = confusion_matrix.sum().sum()
+            phi2 = chi2/n
+            r,k = confusion_matrix.shape
+            phi2corr = max(0, phi2-((k-1)*(r-1))/(n-1))
+            rcorr = r-((r-1)**2)/(n-1)
+            kcorr = k-((k-1)**2)/(n-1)
+            return np.sqrt(phi2corr/min((kcorr-1),(rcorr-1)))
+
+        #Calculamos los coeficientes de correlacion usando la funcion cramers_v
+        data_ = data[cat_feats]
+        rows= []
+        for x in data_:
+            col = []
+            for y in data_ :
+                cramers =cramers_v(data_[x], data_[y]) 
+                col.append(round(cramers,2))
+            rows.append(col)
+            
+        cramers_results = np.array(rows)
+        df = pd.DataFrame(cramers_results, columns = data_.columns, index = data_.columns)
+
+        #Definimos otra paleta de colores
+        mypal_1= ['#FC05FB', '#FEAEFE', '#FCD2FC','#F3FEFA', '#B4FFE4','#3FFEBA', '#FC05FB', '#FEAEFE', '#FCD2FC']
+        #Mostramos el mapa de calor
+        mask = np.triu(np.ones_like(df, dtype=bool))
+        corr = df.mask(mask)
+        f, ax = plt.subplots(figsize=(16, 12), facecolor=None)
+        cmap = sns.color_palette(mypal_1, as_cmap=True)
+        sns.heatmap(corr, mask=mask, cmap=cmap, vmax=1.0, vmin=0, center=0, annot=True,
+                    square=False, linewidths=.01, cbar_kws={"shrink": 0.75})
+        ax.set_title("Categorical Features Correlation (Cramer's V)", fontsize=20, y= 1.05)
+        plt.savefig('./img/cramers_corr.png')
 
     
 
@@ -224,4 +266,5 @@ data = heart_des.get_data()
 #heart_des.categorical_count_plots(data, heart_des.categorical_features[0:-1])
 #heart_des.numeric_pairplot(data)
 #heart_des.reg_plots(data)
-heart_des.pearson_corr(data)
+#heart_des.pearson_corr(data)
+heart_des.cramers_corr(data, heart_des.categorical_features)
