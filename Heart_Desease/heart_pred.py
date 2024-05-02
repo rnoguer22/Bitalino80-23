@@ -7,7 +7,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from sklearn.metrics import recall_score, accuracy_score,roc_curve, auc
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -94,7 +94,7 @@ class Heart_Pred(Heart_Analysis):
         return data
 
 
-    def score_summary(self, names, classifiers):
+    def score_summary(self, names, classifiers, X_train, X_val, y_train, y_val):
         '''
         Given a list of classiers, this function calculates the accuracy, 
         ROC_AUC and Recall and returns the values in a dataframe
@@ -132,14 +132,15 @@ class Heart_Pred(Heart_Analysis):
         return(np.round(data_table.reset_index(drop=True), 2))
 
 
-    def plot_conf_matrix(self, names, classifiers, nrows, ncols, fig_a, fig_b):
+
+    def plot_conf_matrix(self, names, classifiers, nrows, ncols, fig_a, fig_b, X_train, X_val, y_train, y_val):
         '''
-        Plots confusion matrices in a subplots.
+        Plots confusion matrices in subplots.
         
         Args:
-            names : list of names of the classifier
+            names : list of names of the classifiers
             classifiers : list of classification algorithms
-            nrows, ncols : number of rows and rows in the subplots
+            nrows, ncols : number of rows and columns in the subplots
             fig_a, fig_b : dimensions of the figure size
         '''
         
@@ -147,14 +148,18 @@ class Heart_Pred(Heart_Analysis):
         i = 0
         for clf, ax in zip(classifiers, axes.flatten()):
             clf.fit(X_train, y_train)
-            plot_confusion_matrix(clf, X_val, y_val, ax=ax)
-            ax.title.set_text(names[i])
-            i = i + 1       
-        plt.tight_layout() 
+            y_pred = clf.predict(X_val)
+            cm = confusion_matrix(y_val, y_pred) 
+            disp = ConfusionMatrixDisplay(confusion_matrix=cm)  
+            disp.plot(ax=ax)
+            ax.set_title(names[i])
+            i += 1
+        plt.tight_layout()
         plt.show()
+
         
         
-    def roc_auc_curve(self, names, classifiers):
+    def roc_auc_curve(self, names, classifiers, X_train, X_val, y_train, y_val):
         '''
         Given a list of classifiers, this function plots the ROC curves
 
@@ -186,5 +191,6 @@ if __name__ == '__main__':
     names = heart_pred.get_pred_names()
     classifiers = heart_pred.get_pred_classifiers()
     X_train, X_val, y_train, y_val = heart_pred.get_train_test(data)
-    print(heart_pred.score_summary(names, classifiers)) 
-    heart_pred.roc_auc_curve(names, classifiers)
+    print(heart_pred.score_summary(names, classifiers, X_train, X_val, y_train, y_val)) 
+    heart_pred.roc_auc_curve(names, classifiers, X_train, X_val, y_train, y_val)
+    heart_pred.plot_conf_matrix(names, classifiers, nrows=4, ncols=3, fig_a=12, fig_b=12, X_train=X_train, X_val=X_val, y_train=y_train, y_val=y_val)
