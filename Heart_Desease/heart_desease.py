@@ -20,6 +20,14 @@ class Heart_Desease():
                             'max_heart_rate_achieved', 
                             'st_depression', 
                             'num_major_vessels'] 
+        self.categorical_features = ['sex', 
+                                      'fasting_blood_sugar', 
+                                      'exercise_induced_angina', 
+                                      'target', 
+                                      'chest_pain_type', 
+                                      'resting_electrocardiogram', 
+                                      'st_slope', 
+                                      'thalassemia']
         warnings.filterwarnings('ignore')
 
     def get_data(self):
@@ -129,9 +137,38 @@ class Heart_Desease():
                         ax.text(p.get_x()+p.get_width()/2.,height + 3,'{:1.0f}'.format((height)),ha="center",
                             bbox=dict(facecolor='none', edgecolor='black', boxstyle='round', linewidth=0.5))
             i += 1
-
         plt.suptitle('Distribution of Numerical Features' ,fontsize = 24)
         plt.savefig('./img/num_density_plots.png')
+
+
+    #Metodo para ver las graficas de las variables categoricas
+    def categorical_count_plots(self, data, categorical_features):    
+        L = len(categorical_features)
+        ncol= 2
+        nrow= int(np.ceil(L/ncol))
+        remove_last= (nrow * ncol) - L
+
+        fig, ax = plt.subplots(nrow, ncol,figsize=(18, 24), facecolor='#F6F5F4')    
+        fig.subplots_adjust(top=0.92)
+        ax.flat[-remove_last].set_visible(False)
+
+        i = 1
+        for col in categorical_features:
+            plt.subplot(nrow, ncol, i, facecolor='#F6F5F4')
+            ax = sns.countplot(data=data, x=col, hue="target", palette=self.mypal[1::4])
+            ax.set_xlabel(col, fontsize=20)
+            ax.set_ylabel("count", fontsize=20)
+            sns.despine(right=True)
+            sns.despine(offset=0, trim=False) 
+            plt.legend(facecolor='#F6F5F4')
+            
+            for p in ax.patches:
+                height = p.get_height()
+                ax.text(p.get_x()+p.get_width()/2.,height + 3,'{:1.0f}'.format((height)),ha="center",
+                    bbox=dict(facecolor='none', edgecolor='black', boxstyle='round', linewidth=0.5))
+            i = i +1
+        plt.suptitle('Distribution of Categorical Features' ,fontsize = 24)
+        plt.savefig('./img/cat_count_plots.png')
     
 
 
@@ -142,6 +179,24 @@ class Heart_Desease():
         plt.suptitle('Pairplot: Numerical Features ' ,fontsize = 24)
         plt.savefig('./img/num_pairplot.png')
 
+    
+    #Sacamos las regplots para ver la interrelacion entre las variables
+    def reg_plots(self, data):
+        fig, ax = plt.subplots(1,4, figsize=(20, 4))
+        sns.regplot(data=data[data['target'] ==1], x='age', y='cholesterol', ax = ax[0], color=self.mypal[0], label='1')
+        sns.regplot(data=data[data['target'] ==0], x='age', y='cholesterol', ax = ax[0], color=self.mypal[5], label='0')
+        sns.regplot(data=data[data['target'] ==1], x='age', y='max_heart_rate_achieved', ax = ax[1], color=self.mypal[0], label='1')
+        sns.regplot(data=data[data['target'] ==0], x='age', y='max_heart_rate_achieved', ax = ax[1], color=self.mypal[5], label='0')
+        sns.regplot(data=data[data['target'] ==1], x='age', y='resting_blood_pressure', ax = ax[2], color=self.mypal[0], label='1')
+        sns.regplot(data=data[data['target'] ==0], x='age', y='resting_blood_pressure', ax = ax[2], color=self.mypal[5], label='0')
+        sns.regplot(data=data[data['target'] ==1], x='age', y='st_depression', ax = ax[3], color=self.mypal[0], label='1')
+        sns.regplot(data=data[data['target'] ==0], x='age', y='st_depression', ax = ax[3], color=self.mypal[5], label='0')
+        plt.suptitle('Reg plots of selected features')
+        plt.legend()
+        plt.savefig('./img/reg_plots.png')  
+
+    
+
 
 
 heart_des = Heart_Desease('./csv/heart.csv')
@@ -149,7 +204,9 @@ heart_des.drop_data()
 heart_des.rename_columns()
 heart_des.rename_data()
 data = heart_des.get_data()
-heart_des.save_describe(data)
+#heart_des.save_describe(data)
 #heart_des.show_target_distribution(data)
 #heart_des.numeric_density_plots(data)
-heart_des.numeric_pairplot(data)
+heart_des.categorical_count_plots(data, heart_des.categorical_features[0:-1])
+#heart_des.numeric_pairplot(data)
+#heart_des.reg_plots(data)
