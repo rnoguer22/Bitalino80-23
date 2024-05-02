@@ -78,6 +78,11 @@ class Heart_Desease():
         self.data['thalassemia'][self.data['thalassemia'] == 3] = 'reversable defect'
     
 
+    def save_describe(self, data):
+        df = data.describe().T
+        df.to_csv('./csv/summary.csv')
+
+
 
     #Metodo para ver las personas con enfermedades cardiovasculares
     def show_target_distribution(self, data):
@@ -127,6 +132,15 @@ class Heart_Desease():
 
         plt.suptitle('Distribution of Numerical Features' ,fontsize = 24)
         plt.savefig('./img/num_density_plots.png')
+    
+
+
+    #Sacamos el pairplot para ver la relacion entre las variables
+    def numeric_pairplot(self, data):
+        cols = ['age', 'cholesterol', 'resting_blood_pressure', 'max_heart_rate_achieved', 'st_depression', 'target']
+        sns.pairplot(data[cols], hue="target", corner=True, diag_kind='hist', palette=self.mypal[1::4]);
+        plt.suptitle('Pairplot: Numerical Features ' ,fontsize = 24)
+        plt.savefig('./img/num_pairplot.png')
 
 
 
@@ -135,7 +149,7 @@ heart_des.drop_data()
 heart_des.rename_columns()
 heart_des.rename_data()
 data = heart_des.get_data()
+heart_des.save_describe(data)
 #heart_des.show_target_distribution(data)
-
-print(data.describe().T)
-heart_des.numeric_density_plots(data)
+#heart_des.numeric_density_plots(data)
+heart_des.numeric_pairplot(data)
