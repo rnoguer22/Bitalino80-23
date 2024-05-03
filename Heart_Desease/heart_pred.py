@@ -6,6 +6,7 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, Gradien
 from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.preprocessing import StandardScaler
 
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from sklearn.metrics import recall_score, accuracy_score,roc_curve, auc
@@ -166,6 +167,57 @@ class Heart_Pred(Heart_Analysis):
             plt.title('Receiver operating characteristic (ROC) curves', fontsize=20)
             plt.legend(loc="lower right")       
         plt.savefig('./img/predictions/roc_auc_curve.png')
+
+
+
+    def train_random_forest_model(self):
+        # Cargar datos
+        data = self.get_data()
+
+        # Separar características y objetivo
+        X = data.drop(columns=['target'])
+        y = data['target']
+
+        # Escalar características
+        self.scaler = StandardScaler()
+        X_scaled = self.scaler.fit_transform(X)
+
+        # Entrenar modelo Random Forest
+        self.rf_model = RandomForestClassifier(random_state=self.seed)
+        self.rf_model.fit(X_scaled, y)
+
+
+
+    def predict_target(self):
+        # Solicitar al usuario que introduzca los valores de las características
+        print("Introduce los valores de las características:")
+        age = int(input("Edad: "))
+        sex = int(input("Sexo (0 para mujer, 1 para hombre): "))
+        cp = int(input("Tipo de dolor en el pecho (0-3): "))
+        trestbps = int(input("Presión arterial en reposo (mm Hg): "))
+        chol = int(input("Colesterol sérico (mg/dl): "))
+        fbs = int(input("Nivel de azúcar en sangre en ayunas (0 para <= 120 mg/dl, 1 para > 120 mg/dl): "))
+        restecg = int(input("Resultado del electrocardiograma en reposo (0-2): "))
+        thalach = int(input("Frecuencia cardíaca máxima alcanzada: "))
+        exang = int(input("Angina inducida por el ejercicio (0 para no, 1 para sí): "))
+        oldpeak = float(input("Depresión del segmento ST inducida por el ejercicio en relación con el reposo: "))
+        slope = int(input("La pendiente del segmento ST de ejercicio máximo (0-2): "))
+        ca = int(input("Número de vasos principales coloreados por flourosopía: "))
+        thal = int(input("Resultado de la prueba de esfuerzo cardíaco (0-3): "))
+
+        # Crear un DataFrame con los valores de las características
+        data = pd.DataFrame({'age': [age], 'sex': [sex], 'cp': [cp], 'trestbps': [trestbps],
+                             'chol': [chol], 'fbs': [fbs], 'restecg': [restecg], 'thalach': [thalach],
+                             'exang': [exang], 'oldpeak': [oldpeak], 'slope': [slope], 'ca': [ca], 'thal': [thal]})
+
+        # Escalar los datos
+        data_scaled = self.scaler.transform(data)
+
+        # Realizar la predicción
+        prediction = self.rf_model.predict(data_scaled)
+
+        # Imprimir el resultado de la predicción
+        print("Resultado de la predicción (0 para no enfermedad cardíaca, 1 para enfermedad cardíaca):", prediction)
     
 
 
