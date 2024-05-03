@@ -48,19 +48,37 @@ class Gradio_GUI():
                     analysis_img = gr.Image()
                     text_button.click(self.select_analysis, inputs=dropdown_analyis_type, outputs=analysis_img)
 
-                '''with gr.TabItem('Predictions'):
+                with gr.TabItem('Predictions'):
+                    age = gr.Slider(0, 100, step=1, label='Age:', value=50, interactive=True)
                     with gr.Row():
                         with gr.Column():
-                            dropdown = gr.Dropdown(choices=self.models, value=self.models[0], label="Choose the time series model to visualize the prediction:")
-                            text_button = gr.Button("Generate")
-                        output_df = gr.DataFrame()
-                    text_button.click(self.selection, inputs=dropdown, outputs=output_df)
-
-                with gr.TabItem('ChatBot'):
-                    gr.ChatInterface(self.llama3_predict)'''
-
+                            sex = gr.Radio(['Female', 'Male'], label='Sex', value='Female', interactive=True)
+                        thalach = gr.Slider(0, 220, step=1, label='Maximum Heart Rate:', value=100, interactive=True)
+                    with gr.Row():
+                        with gr.Column():
+                            cp = gr.Dropdown(choices=[])
+                        exang = gr.Radio(['No', 'Yes'], label='Exercise Induced Angina', value='No', interactive=True)
+                    with gr.Row():
+                        with gr.Column():
+                            trestbps = gr.Slider(0, 200, step=1, label='Resting Blood Pressure (mm Hg):', value=120, interactive=True)
+                        oldpeak = gr.Slider(0, 10, step=0.1, label='ST Depression Induced by Exercise:', value=0, interactive=True)
+                    with gr.Row():
+                        with gr.Column():
+                            fbs = gr.Radio(['<= 120 mg/dl', '> 120 mg/dl'], label='Fasting Blood Sugar', value='<= 120 mg/dl', interactive=True)
+                        slope = gr.Dropdown(choices=[])
+                    with gr.Row():
+                        with gr.Column():
+                            ca = gr.Slider(0, 0, step=1, label='Number of Major Vessels:', value=0, interactive=True)
+                        chol = gr.Slider(0, 600, step=1, label='Serum Cholesterol (mg/dl):', value=200, interactive=True)
+                    with gr.Row():
+                        with gr.Column():
+                            restecg = gr.Dropdown(choices=[])
+                        thal = gr.Dropdown(choices=[])
+                    button = gr.Button("Predict")
+                    
         demo.launch(inbrowser=True)
     
+
 
 if __name__ == '__main__':
     gradio_gui = Gradio_GUI()
