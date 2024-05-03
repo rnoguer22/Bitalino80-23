@@ -47,9 +47,18 @@ class Gradio_GUI():
         heart_pred = Heart_Pred('./csv/heart.csv')
         data = heart_pred.get_data()
         model, scaler = heart_pred.train_random_forest_model(data)
-        print(age, sex, fbs[0], type(fbs[0]), int(fbs[0]), type(int(fbs[0])))
         prediction = heart_pred.predict_target(model, scaler, age, sex, int(cp[0]), trestbps, chol, int(fbs[0]), int(restecg[0]), thalach, exang, oldpeak, int(slope[0]), ca, int(thal[0]))
-        return gr.Textbox(value=prediction[0], visible=True), gr.DataFrame(value=prediction[1], visible=True, label='This is your introduced data:')
+
+        if prediction[0] == [0]:
+            result = 'Low probability of heart disease'
+        elif prediction[0] == [1]:
+            result = 'High probability of heart disease'
+        else:
+            print(prediction[0])
+            result = 'Error'
+        print(result)
+
+        return gr.Textbox(value=result, visible=True), gr.DataFrame(value=prediction[1], visible=True, label='This is your introduced data:')
 
 
     #Metodo para lanzar la interfaz de gradio    
@@ -92,7 +101,7 @@ class Gradio_GUI():
                         slope = gr.Dropdown(label='ST_Slope:', choices=slope_choices, value=slope_choices[0])
                     with gr.Row():
                         with gr.Column():
-                            ca = gr.Slider(0, 0, step=1, label='Number of Major Vessels:', value=0, interactive=True)
+                            ca = gr.Slider(0, 10, step=1, label='Number of Major Vessels:', value=0, interactive=True)
                         chol = gr.Slider(0, 600, step=1, label='Serum Cholesterol (mg/dl):', value=200, interactive=True)
                     with gr.Row():
                         with gr.Column():
@@ -102,7 +111,7 @@ class Gradio_GUI():
                         thal = gr.Dropdown(choices=thal_choices, label='Thalassemia:', value=thal_choices[0])
                     button = gr.Button("Predict")
                     output_text = gr.Textbox(interactive=True, visible=False)
-                    output_df = gr.DataFrame(visible=False, interactive=True)
+                    output_df = gr.DataFrame(visible=False)
                     button.click(self.predict, inputs=[age, sex, thalach, cp, exang, trestbps, oldpeak, fbs, slope, ca, chol, restecg, thal], outputs=[output_text, output_df])
 
         demo.launch(inbrowser=True)
