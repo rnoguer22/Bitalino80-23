@@ -180,8 +180,8 @@ class Heart_Pred(Heart_Analysis):
 
 
 
-    def predict_target(self, model, scaler):
-        print("Introduce los valores de las características:")
+    def predict_target(self, model, scaler, age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal):
+        '''print("Introduce los valores de las características:")
         age = int(input("Edad: "))
         sex = int(input("Sexo (0 para mujer, 1 para hombre): "))
         cp = int(input("Tipo de dolor en el pecho (0-3): "))
@@ -194,7 +194,7 @@ class Heart_Pred(Heart_Analysis):
         oldpeak = float(input("Depresión del segmento ST inducida por el ejercicio en relación con el reposo: "))
         slope = int(input("La pendiente del segmento ST de ejercicio máximo (0-2): "))
         ca = int(input("Número de vasos principales coloreados por flourosopía: "))
-        thal = int(input("Resultado de la prueba de esfuerzo cardíaco (0-3): "))
+        thal = int(input("Resultado de la prueba de esfuerzo cardíaco (0-3): "))'''
 
         #Creamos un dataframe con los datos introducidos por el usuario
         data = pd.DataFrame({'age': [age], 'sex': [sex], 'cp': [cp], 'trestbps': [trestbps],
@@ -205,22 +205,22 @@ class Heart_Pred(Heart_Analysis):
         #Realizamos la prediccion
         prediction = model.predict(data_scaled)
         #Mostramos el resultado
-        print("Resultado de la predicción (0 para no enfermedad cardíaca, 1 para enfermedad cardíaca):", prediction)
+        return prediction, data
     
 
 
 
-if __name__ == '__main__':
+'''if __name__ == '__main__':
     heart_pred = Heart_Pred('./csv/heart.csv')
     data = heart_pred.get_data()
     names = heart_pred.get_pred_names()
     classifiers = heart_pred.get_pred_classifiers()
     X_train, X_val, y_train, y_val = heart_pred.get_train_test(data)
-    '''df = heart_pred.score_summary(names, classifiers, X_train, X_val, y_train, y_val)
+    df = heart_pred.score_summary(names, classifiers, X_train, X_val, y_train, y_val)
     print(df)
     df.to_csv('./csv/predictions/predictions.csv', index=False)
     heart_pred.roc_auc_curve(names, classifiers, X_train, X_val, y_train, y_val)
-    heart_pred.plot_conf_matrix(names, classifiers, nrows=4, ncols=3, fig_a=12, fig_b=12, X_train=X_train, X_val=X_val, y_train=y_train, y_val=y_val)'''
+    heart_pred.plot_conf_matrix(names, classifiers, nrows=4, ncols=3, fig_a=12, fig_b=12, X_train=X_train, X_val=X_val, y_train=y_train, y_val=y_val)
 
     model, scaler = heart_pred.train_random_forest_model(data)
-    heart_pred.predict_target(model, scaler)
+    heart_pred.predict_target(model, scaler)'''
