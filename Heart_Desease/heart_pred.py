@@ -1,6 +1,6 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC, LinearSVC, NuSVC
+from sklearn.svm import SVC, NuSVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
 from sklearn.naive_bayes import GaussianNB
@@ -9,13 +9,11 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.preprocessing import StandardScaler
 
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-from sklearn.metrics import recall_score, accuracy_score,roc_curve, auc
+from sklearn.metrics import accuracy_score,roc_curve, auc
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
 
-from sklearn.preprocessing import LabelEncoder
-import shap 
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -100,16 +98,15 @@ class Heart_Pred(Heart_Analysis):
             fpr, tpr, thresholds = roc_curve(y_val, pred_proba)        
             roc_auc = auc(fpr, tpr)
             
-            # confusion matric, cm
             cm = confusion_matrix(y_val, pred) 
             
-            # recall: TP/(TP+FN)
+            #Recall = TP/(TP+FN)
             recall = cm[1,1]/(cm[1,1] +cm[1,0])
             
-            # precision: TP/(TP+FP)
+            #Precision = TP/(TP+FP)
             precision = cm[1,1]/(cm[1,1] +cm[0,1])
             
-            # F1 score: TP/(TP+FP)
+            #F1 score = TP/(TP+FP)
             f1 = 2*recall*precision/(recall + precision)
 
             df = pd.DataFrame([[name, accuracy*100, roc_auc, recall, precision, f1]], columns=cols)
@@ -173,7 +170,7 @@ class Heart_Pred(Heart_Analysis):
     def train_random_forest_model(self, data):
         X = data.drop(columns=['target'])
         y = data['target']
-        #Escalar características
+        #Escalamos los datos
         scaler = StandardScaler()
         X_scaled = scaler.fit_transform(X)
         #Entrenamos el Random Forest
