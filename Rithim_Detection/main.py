@@ -34,6 +34,19 @@ if __name__ == '__main__':
 
         pulse_value = np.random.randint(60, 100)  
 
+        #Mostrar las revoluciones por minuto en la pantalla
+
+        for (x, y, w, h) in faces:
+            
+            texto = f'Pulse: {pulse_value} bpm'
+            posicion_texto = (x, y - 10)  
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            escala = 1
+            color = (0, 255, 0)
+            grosor = 1
+        
+            cv2.putText(frame, texto, posicion_texto, font, escala, color, grosor, cv2.LINE_AA)
+
         pulse_values.append(pulse_value)
 
        
