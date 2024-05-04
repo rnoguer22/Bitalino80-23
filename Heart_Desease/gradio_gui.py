@@ -48,6 +48,8 @@ class Gradio_GUI():
         data = heart_pred.get_data()
         model, scaler = heart_pred.train_random_forest_model(data)
         prediction = heart_pred.predict_target(model, scaler, age, sex, int(cp[0]), trestbps, chol, int(fbs[0]), int(restecg[0]), thalach, exang, oldpeak, int(slope[0]), ca, int(thal[0]))
+        X_train, _, y_train, _ = heart_pred.get_train_test(data)
+        acc, std = heart_pred.get_mean_accuracy(model, X_train, y_train)
 
         if prediction[0] == [0]:
             result = 'Low probability of heart disease'
@@ -58,7 +60,7 @@ class Gradio_GUI():
             result = 'Error'
         print(result)
 
-        return gr.Textbox(value=result, visible=True), gr.DataFrame(value=prediction[1], visible=True, label='This is your introduced data:')
+        return gr.Textbox(value=f'{result}\n\n{acc}\n{std}', visible=True), gr.DataFrame(value=prediction[1], visible=True, label='This is your introduced data:')
 
 
     #Metodo para lanzar la interfaz de gradio    
