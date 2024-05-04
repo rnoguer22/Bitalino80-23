@@ -117,9 +117,3 @@ class Gradio_GUI():
                     button.click(self.predict, inputs=[age, sex, thalach, cp, exang, trestbps, oldpeak, fbs, slope, ca, chol, restecg, thal], outputs=[output_text, output_df])
 
         demo.launch(inbrowser=True)
-    
-
-
-if __name__ == '__main__':
-    gradio_gui = Gradio_GUI()
-    gradio_gui.launch_gradio_gui()
