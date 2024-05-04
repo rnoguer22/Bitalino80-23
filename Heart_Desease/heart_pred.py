@@ -202,6 +202,7 @@ class Heart_Pred(Heart_Analysis):
                              'exang': [exang], 'oldpeak': [oldpeak], 'slope': [slope], 'ca': [ca], 'thal': [thal]})
         #Escalamos los datos
         data_scaled = scaler.transform(data)
+        print(model.predict_proba(data_scaled))
         #Realizamos la prediccion
         prediction = model.predict(data_scaled)
         #Mostramos el resultado
@@ -223,4 +224,4 @@ class Heart_Pred(Heart_Analysis):
     heart_pred.plot_conf_matrix(names, classifiers, nrows=4, ncols=3, fig_a=12, fig_b=12, X_train=X_train, X_val=X_val, y_train=y_train, y_val=y_val)
 
     model, scaler = heart_pred.train_random_forest_model(data)
-    heart_pred.predict_target(model, scaler)'''
+    print(heart_pred.predict_target(model, scaler))'''

@@ -79,20 +79,20 @@ class Gradio_GUI():
                     text_button.click(self.select_analysis, inputs=dropdown_analyis_type, outputs=analysis_img)
 
                 with gr.TabItem('Predictions'):
-                    age = gr.Slider(0, 100, step=1, label='Age:', value=50, interactive=True)
+                    age = gr.Slider(0, 100, step=1, label='Age:', value=55, interactive=True)
                     with gr.Row():
                         with gr.Column():
-                            sex = gr.Radio(['Female', 'Male'], label='Sex', value='Female', interactive=True)
-                        thalach = gr.Slider(0, 220, step=1, label='Maximum Heart Rate:', value=100, interactive=True)
+                            sex = gr.Radio(['Female', 'Male'], label='Sex', value='Male', interactive=True)
+                        thalach = gr.Slider(0, 220, step=1, label='Maximum Heart Rate:', value=111, interactive=True)
                     with gr.Row():
                         with gr.Column():
                             cp_choices = ['0: Typical angina', '1: Atypical angina', '2: Non-anginal pain', '3: Asymptomatic']
                             cp = gr.Dropdown(label='Chest Pain Type:', choices=cp_choices, value=cp_choices[0])
-                        exang = gr.Radio(['No', 'Yes'], label='Exercise Induced Angina', value='No', interactive=True)
+                        exang = gr.Radio(['No', 'Yes'], label='Exercise Induced Angina', value='Yes', interactive=True)
                     with gr.Row():
                         with gr.Column():
-                            trestbps = gr.Slider(0, 200, step=1, label='Resting Blood Pressure (mm Hg):', value=120, interactive=True)
-                        oldpeak = gr.Slider(0, 10, step=0.1, label='ST Depression Induced by Exercise:', value=0, interactive=True)
+                            trestbps = gr.Slider(0, 200, step=1, label='Resting Blood Pressure (mm Hg):', value=140, interactive=True)
+                        oldpeak = gr.Slider(0, 10, step=0.1, label='ST Depression Induced by Exercise:', value=5.6, interactive=True)
                     with gr.Row():
                         with gr.Column():
                             fbs_choices = ['0: Lower than 120 mg/dl', '1: Greater than 120 mg/dl']
@@ -102,13 +102,13 @@ class Gradio_GUI():
                     with gr.Row():
                         with gr.Column():
                             ca = gr.Slider(0, 10, step=1, label='Number of Major Vessels:', value=0, interactive=True)
-                        chol = gr.Slider(0, 600, step=1, label='Serum Cholesterol (mg/dl):', value=200, interactive=True)
+                        chol = gr.Slider(0, 600, step=1, label='Serum Cholesterol (mg/dl):', value=217, interactive=True)
                     with gr.Row():
                         with gr.Column():
                             restecg_choices = ['0: Normal', '1: ST-T wave abnormality', '2: Left ventricular hypertrophy']
-                            restecg = gr.Dropdown(choices=restecg_choices, label='Resting Electrocardiogram (ECG):', value=restecg_choices[0])
+                            restecg = gr.Dropdown(choices=restecg_choices, label='Resting Electrocardiogram (ECG):', value=restecg_choices[1])
                         thal_choices = ['1: Fixed defect', '2: Normal', '3: Reversable defect']
-                        thal = gr.Dropdown(choices=thal_choices, label='Thalassemia:', value=thal_choices[0])
+                        thal = gr.Dropdown(choices=thal_choices, label='Thalassemia:', value=thal_choices[2])
                     button = gr.Button("Predict")
                     output_text = gr.Textbox(interactive=True, visible=False)
                     output_df = gr.DataFrame(visible=False)
