@@ -7,6 +7,8 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_val_score
+
 
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from sklearn.metrics import accuracy_score,roc_curve, auc
@@ -211,7 +213,7 @@ class Heart_Pred(Heart_Analysis):
 
 
 
-'''if __name__ == '__main__':
+if __name__ == '__main__':
     heart_pred = Heart_Pred('./csv/heart.csv')
     data = heart_pred.get_data()
     names = heart_pred.get_pred_names()
@@ -224,4 +226,43 @@ class Heart_Pred(Heart_Analysis):
     heart_pred.plot_conf_matrix(names, classifiers, nrows=4, ncols=3, fig_a=12, fig_b=12, X_train=X_train, X_val=X_val, y_train=y_train, y_val=y_val)
 
     model, scaler = heart_pred.train_random_forest_model(data)
-    print(heart_pred.predict_target(model, scaler))'''
+
+    # Realizar la validación cruzada con 5 folds
+    cv_scores = cross_val_score(model, X_train, y_train, cv=5)
+    # Imprimir los resultados de la validación cruzada
+    print("Cross-validation scores:", cv_scores)
+    # Calcular la media y la desviación estándar de los scores
+    print("Mean accuracy:", cv_scores.mean())
+    print("Standard deviation of accuracy:", cv_scores.std())
+
+
+    from sklearn.model_selection import GridSearchCV
+    from sklearn.ensemble import RandomForestClassifier
+
+    # Definir los hiperparámetros que deseas ajustar
+    param_grid = {
+        'n_estimators': [100, 125, 150, 175, 200, 225, 250, 275, 300],  # Número de árboles en el bosque
+        'max_depth': [None, 10, 20],       # Profundidad máxima de los árboles
+        'min_samples_split': [2, 5, 10],   # Número mínimo de muestras requeridas para dividir un nodo interno
+        'min_samples_leaf': [1, 2, 4],     # Número mínimo de muestras requeridas en cada hoja
+        'max_features': ['auto', 'sqrt']   # Número máximo de características a considerar para dividir un nodo
+    }
+
+    # Inicializar el clasificador RandomForestClassifier
+    rf = RandomForestClassifier(random_state=42)
+
+    # Inicializar GridSearchCV con el RandomForestClassifier y los hiperparámetros definidos
+    grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=5, scoring='accuracy', n_jobs=-1)
+
+    # Ajustar GridSearchCV a los datos de entrenamiento
+    grid_search.fit(X_train, y_train)
+
+    # Obtener el mejor modelo y sus hiperparámetros
+    best_rf = grid_search.best_estimator_
+    best_params = grid_search.best_params_
+    best_score = grid_search.best_score_
+
+    print("Mejores hiperparámetros:", best_params)
+    print("Mejor puntuación de precisión:", best_score)
+
+    print(heart_pred.predict_target(model, scaler))
