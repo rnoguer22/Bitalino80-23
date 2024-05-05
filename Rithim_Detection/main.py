@@ -1,7 +1,7 @@
-from src.detect_faces import detect_faces, detect_keypoints
+from src.detect_faces import detect_faces, detect_keypoints, select_rois
 from src.signal_processing import butter_bandpass_filter, obtener_señales_interpoladas, reduccion_dimensionalidad_PCA, calcular_frecuencia_cardiaca
 
-from src.plot import show_realtime_graph
+from src.plot import show_realtime_graph, generar_frecuencia_cardiaca
 import cv2
 import numpy as np
 
@@ -11,6 +11,10 @@ if __name__ == '__main__':
 
     # Lista para almacenar los valores aproximados del pulso cardíaco
     pulse_values = []
+
+    freq = 50
+    
+    i = 0
 
     while True:
         # Capturar un frame de la cámara
@@ -32,13 +36,22 @@ if __name__ == '__main__':
 
         #Simulación de la señal de pulso cardíaco
 
-        pulse_value = np.random.randint(60, 100)  
+        if len(faces) == 0:
+            frecuencia_cardiaca = generar_frecuencia_cardiaca(freq, i, True)
+            i += 1
+            pulse_values.append(frecuencia_cardiaca)
+        
+        else:
+            frecuencia_cardiaca = generar_frecuencia_cardiaca(freq, i)
+            i += 1
+            pulse_values.append(frecuencia_cardiaca)
+
 
         #Mostrar las revoluciones por minuto en la pantalla
 
         for (x, y, w, h) in faces:
             
-            texto = f'Pulse: {pulse_value} bpm'
+            texto = f'Pulse: {frecuencia_cardiaca} bpm'
             posicion_texto = (x, y - 10)  
             font = cv2.FONT_HERSHEY_SIMPLEX
             escala = 1
@@ -47,9 +60,7 @@ if __name__ == '__main__':
         
             cv2.putText(frame, texto, posicion_texto, font, escala, color, grosor, cv2.LINE_AA)
 
-        pulse_values.append(pulse_value)
 
-       
         result_frame = show_realtime_graph(frame, pulse_values)
         cv2.imshow('Frame', result_frame)
 

@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import random
 
 def show_realtime_graph(frame, pulse_values):
     graph_height = frame.shape[0]  # Usar la altura del frame de la cámara
@@ -10,9 +11,12 @@ def show_realtime_graph(frame, pulse_values):
     # Crear una imagen en negro para la gráfica
     graph = np.zeros((graph_height, graph_width, 3), np.uint8)
 
-    # Calcular los límites de los ejes x e y
-    max_y = max(pulse_values) if pulse_values else 1
-    min_y = min(pulse_values) if pulse_values else 0
+    if len(set(pulse_values)) == 1:  # Si todos los elementos son iguales
+        max_y = pulse_values[0] + 1
+        min_y = pulse_values[0] - 1
+    else:
+        max_y = max(pulse_values)
+        min_y = min(pulse_values)
 
     # Calcular el desplazamiento necesario para ajustar los puntos del eje x
     shift = max(0, (len(pulse_values) * x_spacing + 2 * padding) - graph_width)
@@ -35,6 +39,21 @@ def show_realtime_graph(frame, pulse_values):
     result = np.hstack((frame, graph))
 
     return result
+
+def generar_frecuencia_cardiaca(frecuencia_cardiaca_promedio, i, constant = False):
+    # Simular una señal de pulso cardíaco con ruido aleatorio
+    if constant == False:
+        noise = random.uniform(-1, 1)
+        pulse_rate = frecuencia_cardiaca_promedio + noise
+
+        if i % 10 == 0:
+            #simular picos
+            pulse_rate = frecuencia_cardiaca_promedio + random.randint(10, 20)
+
+        return round(pulse_rate)
+    else:
+        return frecuencia_cardiaca_promedio
+    
 
 
 
