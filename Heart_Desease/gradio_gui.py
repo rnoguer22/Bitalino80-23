@@ -116,4 +116,4 @@ class Gradio_GUI():
                     output_df = gr.DataFrame(visible=False)
                     button.click(self.predict, inputs=[age, sex, thalach, cp, exang, trestbps, oldpeak, fbs, slope, ca, chol, restecg, thal], outputs=[output_text, output_df])
 
-        demo.launch(inbrowser=True)
+        demo.launch(inbrowser=True, share=True)
