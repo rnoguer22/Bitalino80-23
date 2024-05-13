@@ -43,7 +43,7 @@ def show_realtime_graph(frame, pulse_values):
 def generar_frecuencia_cardiaca(frecuencia_cardiaca_promedio, i, constant = False):
     # Simular una señal de pulso cardíaco con ruido aleatorio
     if constant == False:
-        noise = random.uniform(-1, 1)
+        noise = random.uniform(-2, 2)
         pulse_rate = frecuencia_cardiaca_promedio + noise
 
         if i % 10 == 0:

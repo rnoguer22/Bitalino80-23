@@ -8,7 +8,7 @@ def launch_rithim():
     # Lista para almacenar los valores aproximados del pulso cardíaco
     pulse_values = []
 
-    freq = 50
+    freq = 60
     
     i = 0
 
