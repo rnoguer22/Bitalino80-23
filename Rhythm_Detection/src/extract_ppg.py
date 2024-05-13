@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from src.detect_faces import detect_faces, detect_keypoints, select_rois
+from Rhythm_Detection.src.detect_faces import detect_faces, detect_keypoints, select_rois
 
 
 def extract_ppg_signal(frame, roi):

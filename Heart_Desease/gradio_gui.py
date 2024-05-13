@@ -1,7 +1,7 @@
 import os
 import gradio as gr
 
-from heart_pred import Heart_Pred
+from Heart_Desease.heart_pred import Heart_Pred
 
 
 
@@ -9,13 +9,13 @@ class Gradio_GUI():
         
     #Metodo para devolver el path de la imagen a mostrar
     def select_analysis(self, analysis_type):
-        base_path = './img/predictions/'
+        base_path = 'Heart_Desease/img/predictions/'
         if analysis_type == 'Confusion Matrixes':
             analysis = 'confusion_matrixes.png'
         elif analysis_type == 'ROC Curves':
             analysis = 'roc_auc_curve.png'
         else:
-            base_path = './img/analysis/'
+            base_path = 'Heart_Desease/img/analysis/'
             if analysis_type == 'Target Distribution':
                 analysis = 'target_distribution.png'
             elif analysis_type == 'Distribution of Categorical Features':
@@ -44,7 +44,7 @@ class Gradio_GUI():
         else:
             exang = 1
 
-        heart_pred = Heart_Pred('./csv/heart.csv')
+        heart_pred = Heart_Pred('Heart_Desease/csv/heart.csv')
         data = heart_pred.get_data()
         model, scaler = heart_pred.train_random_forest_model(data)
         prediction = heart_pred.predict_target(model, scaler, age, sex, int(cp[0]), trestbps, chol, int(fbs[0]), int(restecg[0]), thalach, exang, oldpeak, int(slope[0]), ca, int(thal[0]))
@@ -112,7 +112,7 @@ class Gradio_GUI():
                         thal_choices = ['1: Fixed defect', '2: Normal', '3: Reversable defect']
                         thal = gr.Dropdown(choices=thal_choices, label='Thalassemia:', value=thal_choices[2])
                     button = gr.Button("Predict")
-                    output_text = gr.Textbox(interactive=True, visible=False)
+                    output_text = gr.Textbox(interactive=True, visible=False, label='Prediction result:')
                     output_df = gr.DataFrame(visible=False)
                     button.click(self.predict, inputs=[age, sex, thalach, cp, exang, trestbps, oldpeak, fbs, slope, ca, chol, restecg, thal], outputs=[output_text, output_df])
 

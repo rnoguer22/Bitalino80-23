@@ -1,5 +1,5 @@
-from src.detect_faces import detect_faces, detect_keypoints
-from src.plot import show_realtime_graph, generar_frecuencia_cardiaca
+from Rhythm_Detection.src.detect_faces import detect_faces, detect_keypoints
+from Rhythm_Detection.src.plot import show_realtime_graph, generar_frecuencia_cardiaca
 import cv2
 
 def launch_rithim():

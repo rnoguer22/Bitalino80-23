@@ -20,7 +20,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-from heart_analysis import Heart_Analysis
+from Heart_Desease.heart_analysis import Heart_Analysis
 
 
 
